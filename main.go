@@ -1,6 +1,8 @@
 package main
 
 import (
+	"demo/config"
+	"demo/internal/db"
 	"demo/internal/initialize"
 	_ "demo/internal/packed"
 	"fmt"
@@ -23,6 +25,18 @@ func main() {
 
 	initialize.InitLoadConfig()
 	initialize.InitToken()
+
+	// init config
+	cfg := config.GetConfig()
+	fmt.Printf("Config: %v\n", cfg)
+
+	// init db
+	db := db.GetDatabaseConnection()
+	if db == nil {
+		fmt.Println("Failed to connect to the database")
+		return
+	}
+	defer db.Close()
 
 	cmd.Main.Run(gctx.GetInitCtx())
 }
