@@ -14,7 +14,6 @@ import (
 )
 
 func main() {
-
 	if len(os.Args) > 1 {
 		env := os.Args[1]
 
