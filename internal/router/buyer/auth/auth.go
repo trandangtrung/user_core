@@ -9,7 +9,7 @@ import (
 
 func Register(r *ghttp.RouterGroup, middleware middleware.Middleware, authC auth.IAuthV1) {
 	r.Group("/", func(group *ghttp.RouterGroup) {
-		group.Middleware(ghttp.MiddlewareHandlerResponse, middleware.AuthMiddleware("", "", true))
+		group.Middleware(middleware.AuthMiddleware("", "", true), ghttp.MiddlewareHandlerResponse)
 		group.Bind(
 			authC,
 		)

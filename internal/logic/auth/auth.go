@@ -14,6 +14,8 @@ import (
 	"fmt"
 
 	"github.com/gogf/gf/frame/g"
+	"github.com/gogf/gf/v2/errors/gcode"
+	"github.com/gogf/gf/v2/errors/gerror"
 )
 
 type user struct {
@@ -66,7 +68,6 @@ func (a *AuthLogic) Login(ctx context.Context, req *v1.LoginReq) (res *v1.LoginR
 		User_id:      user.Id,
 		RefreshToken: refreshToken,
 		Scope:        scope,
-		
 	}
 
 	err = a.tokenL.Create(ctx, reqToken)
@@ -165,7 +166,7 @@ func (a *AuthLogic) GetRoleByUserIDAndPlatform(ctx context.Context, platformName
 		Struct(&role)
 
 	if err != nil {
-		return nil, err
+		return nil, gerror.NewCode(gcode.CodeNotFound, "error pattern")
 	}
 
 	return role, nil
