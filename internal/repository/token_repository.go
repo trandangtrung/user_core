@@ -9,12 +9,12 @@ import (
 
 type (
 	TokenRepository interface {
-		Create(ctx context.Context, token *entity.Token) error
+		Create(ctx context.Context, token *entity.Token) (*entity.Token, error)
 		GetByID(ctx context.Context, id uint) (*entity.Token, error)
 		GetByUserID(ctx context.Context, userID uint) (*entity.Token, error)
 		GetByToken(ctx context.Context, token string) (*entity.Token, error)
 		GetUser(ctx context.Context, id uint) (*entity.User, error)
-		Update(ctx context.Context, token *entity.Token) error
+		Update(ctx context.Context, token *entity.Token) (*entity.Token, error)
 		Delete(ctx context.Context, id uint) error
 	}
 
@@ -27,11 +27,11 @@ func NewTokenRepository(db *gorm.DB) TokenRepository {
 	return &tokenRepository{db: db}
 }
 
-func (r *tokenRepository) Create(ctx context.Context, token *entity.Token) error {
+func (r *tokenRepository) Create(ctx context.Context, token *entity.Token) (*entity.Token, error) {
 	if err := r.db.WithContext(ctx).Create(token).Error; err != nil {
-		return err
+		return nil, err
 	}
-	return nil
+	return token, nil
 }
 
 func (r *tokenRepository) GetByID(ctx context.Context, id uint) (*entity.Token, error) {
@@ -66,11 +66,11 @@ func (r *tokenRepository) GetUser(ctx context.Context, id uint) (*entity.User, e
 	return token.User, nil
 }
 
-func (r *tokenRepository) Update(ctx context.Context, token *entity.Token) error {
+func (r *tokenRepository) Update(ctx context.Context, token *entity.Token) (*entity.Token, error) {
 	if err := r.db.WithContext(ctx).Save(token).Error; err != nil {
-		return err
+		return nil, err
 	}
-	return nil
+	return token, nil
 }
 
 func (r *tokenRepository) Delete(ctx context.Context, id uint) error {

@@ -6,15 +6,15 @@ package auth
 
 import (
 	"demo/api/auth"
-	authL "demo/internal/logic/auth"
+	"demo/internal/service"
 )
 
 type ControllerV1 struct {
-	authLogic authL.AuthLogic
+	authService service.AuthService
 }
 
-func NewV1() auth.IAuthV1 {
+func NewV1(authService service.AuthService) auth.IAuthV1 {
 	return &ControllerV1{
-		authLogic: authL.AuthLogic{},
+		authService: authService,
 	}
 }

@@ -8,7 +8,7 @@ import (
 )
 
 func (c *ControllerV1) Update(ctx context.Context, req *v1.UpdateReq) (res *v1.UpdateRes, err error) {
-	res, err = c.token.Update(ctx, req.Id, req)
+	res, err = c.tokenService.Update(ctx, req.Id, req)
 
 	if err != nil {
 		global.Logger.Error(ctx, err)

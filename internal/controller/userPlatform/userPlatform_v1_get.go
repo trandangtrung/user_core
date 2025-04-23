@@ -8,7 +8,7 @@ import (
 )
 
 func (c *ControllerV1) Get(ctx context.Context, req *v1.GetReq) (res *v1.GetRes, err error) {
-	res, err = c.userPlatform.Get(ctx, req)
+	res, err = c.userPlatformService.Get(ctx, req)
 
 	if err != nil {
 		global.Logger.Error(ctx, err)

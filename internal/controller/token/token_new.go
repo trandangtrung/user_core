@@ -6,13 +6,15 @@ package token
 
 import (
 	"demo/api/token"
-	tokenL "demo/internal/logic/token"
+	"demo/internal/service"
 )
 
 type ControllerV1 struct {
-	token tokenL.Token
+	tokenService service.TokenService
 }
 
-func NewV1() token.ITokenV1 {
-	return &ControllerV1{}
+func NewV1(tokenService service.TokenService) token.ITokenV1 {
+	return &ControllerV1{
+		tokenService: tokenService,
+	}
 }

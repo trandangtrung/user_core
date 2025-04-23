@@ -11,10 +11,10 @@ import (
 
 type (
 	UserRepository interface {
-		Create(ctx context.Context, user *entity.User) error
+		Create(ctx context.Context, user *entity.User) (*entity.User, error)
 		GetByID(ctx context.Context, id uint) (*entity.User, error)
 		GetByEmail(ctx context.Context, email string) (*entity.User, error)
-		Update(ctx context.Context, user *entity.User) error
+		Update(ctx context.Context, user *entity.User) (*entity.User, error)
 		Delete(ctx context.Context, id uint) error
 	}
 
@@ -27,11 +27,11 @@ func NewUserRepository(db *gorm.DB) UserRepository {
 	return &userRepository{db: db}
 }
 
-func (r *userRepository) Create(ctx context.Context, user *entity.User) error {
+func (r *userRepository) Create(ctx context.Context, user *entity.User) (*entity.User, error) {
 	if err := r.db.WithContext(ctx).Create(user).Error; err != nil {
-		return err
+		return nil, err
 	}
-	return nil
+	return user, nil
 }
 
 func (r *userRepository) GetByID(ctx context.Context, id uint) (*entity.User, error) {
@@ -53,11 +53,11 @@ func (r *userRepository) GetByEmail(ctx context.Context, email string) (*entity.
 	return &user, nil
 }
 
-func (r *userRepository) Update(ctx context.Context, user *entity.User) error {
+func (r *userRepository) Update(ctx context.Context, user *entity.User) (*entity.User, error) {
 	if err := r.db.WithContext(ctx).Save(user).Error; err != nil {
-		return err
+		return nil, err
 	}
-	return nil
+	return user, nil
 }
 
 func (r *userRepository) Delete(ctx context.Context, id uint) error {

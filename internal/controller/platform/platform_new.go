@@ -6,13 +6,15 @@ package platform
 
 import (
 	"demo/api/platform"
-	platformL "demo/internal/logic/platform"
+	"demo/internal/service"
 )
 
 type ControllerV1 struct {
-	platform platformL.Platform
+	platformService service.PlatformService
 }
 
-func NewV1() platform.IPlatformV1 {
-	return &ControllerV1{}
+func NewV1(platformService service.PlatformService) platform.IPlatformV1 {
+	return &ControllerV1{
+		platformService: platformService,
+	}
 }

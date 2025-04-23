@@ -19,6 +19,9 @@ migrateup1:
 migratedown1:
 	migrate -path "$(PATH_DB)" -database "$(DB_URL)" -verbose down 1
 
+run:
+	go run main.go
+
 dev:
 	go run main.go dev
 

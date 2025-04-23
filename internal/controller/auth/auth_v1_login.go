@@ -8,7 +8,7 @@ import (
 )
 
 func (c *ControllerV1) Login(ctx context.Context, req *v1.LoginReq) (res *v1.LoginRes, err error) {
-	user, err := c.authLogic.Login(ctx, req)
+	user, err := c.authService.Login(ctx, req)
 
 	if err != nil {
 		global.Logger.Error(ctx, err)

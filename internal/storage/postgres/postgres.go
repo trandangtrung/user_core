@@ -1,7 +1,7 @@
-package db
+package postgres
 
 import (
-	"demo/config"
+	"demo/internal/config"
 	"demo/internal/entity"
 	"log"
 	"sync"
@@ -28,17 +28,15 @@ func GetDatabaseConnection() *Database {
 
 func dbConnect() *gorm.DB {
 
-	cfg := config.GetConfig().DbCfg
-	dsn := cfg.GetDSN()
+	dsn := getDsn()
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
 		log.Fatalf("failed to connect to database, error: %v", err)
 	}
 
-	err = db.AutoMigrate(entity.Platform{}, entity.Role{}, entity.Token{},
-		entity.UserPlatform{}, entity.UserRole{}, entity.User{})
+	err = autoMigrate(db)
 	if err != nil {
-		log.Fatalf("failed to migrate database, error: %v", err)
+		log.Fatalf("failed to auto migrate, error: %v", err)
 	}
 
 	return db
@@ -51,4 +49,26 @@ func (d *Database) Close() error {
 	}
 
 	return sqlDB.Close()
+}
+
+func autoMigrate(db *gorm.DB) error {
+	return db.AutoMigrate(
+		&entity.User{},
+		&entity.Platform{},
+		&entity.Role{},
+		&entity.UserRole{},
+		&entity.UserPlatform{},
+		&entity.Token{},
+	)
+}
+
+func getDsn() string {
+	cfg := config.GetConfig().DbCfg
+	return "host=" + cfg.Host +
+		" user=" + cfg.User +
+		" password=" + cfg.Password +
+		" dbname=" + cfg.DbName +
+		" port=" + cfg.Port +
+		" sslmode=" + cfg.SSLMode +
+		" TimeZone=" + cfg.TimeZone
 }

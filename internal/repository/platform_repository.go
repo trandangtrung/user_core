@@ -9,9 +9,9 @@ import (
 
 type (
 	PlatformRepository interface {
-		Create(ctx context.Context, platform *entity.Platform) error
+		Create(ctx context.Context, platform *entity.Platform) (*entity.Platform, error)
 		GetByID(ctx context.Context, id uint) (*entity.Platform, error)
-		Update(ctx context.Context, platform *entity.Platform) error
+		Update(ctx context.Context, platform *entity.Platform) (*entity.Platform, error)
 		Delete(ctx context.Context, id uint) error
 	}
 
@@ -24,11 +24,11 @@ func NewPlatformRepository(db *gorm.DB) PlatformRepository {
 	return &platformRepository{db: db}
 }
 
-func (r *platformRepository) Create(ctx context.Context, platform *entity.Platform) error {
+func (r *platformRepository) Create(ctx context.Context, platform *entity.Platform) (*entity.Platform, error) {
 	if err := r.db.WithContext(ctx).Create(platform).Error; err != nil {
-		return err
+		return nil, err
 	}
-	return nil
+	return platform, nil
 }
 
 func (r *platformRepository) GetByID(ctx context.Context, id uint) (*entity.Platform, error) {
@@ -39,11 +39,11 @@ func (r *platformRepository) GetByID(ctx context.Context, id uint) (*entity.Plat
 	return &platform, nil
 }
 
-func (r *platformRepository) Update(ctx context.Context, platform *entity.Platform) error {
+func (r *platformRepository) Update(ctx context.Context, platform *entity.Platform) (*entity.Platform, error) {
 	if err := r.db.WithContext(ctx).Save(platform).Error; err != nil {
-		return err
+		return nil, err
 	}
-	return nil
+	return platform, nil
 }
 
 func (r *platformRepository) Delete(ctx context.Context, id uint) error {

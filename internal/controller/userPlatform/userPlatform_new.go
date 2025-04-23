@@ -6,15 +6,15 @@ package userPlatform
 
 import (
 	"demo/api/userPlatform"
-	userPlatformL "demo/internal/logic/user-platform"
+	"demo/internal/service"
 )
 
 type ControllerV1 struct {
-	userPlatform userPlatformL.UserPlatform
+	userPlatformService service.UserPlatformService
 }
 
-func NewV1() userPlatform.IUserPlatformV1 {
+func NewV1(userPlatformService service.UserPlatformService) userPlatform.IUserPlatformV1 {
 	return &ControllerV1{
-		userPlatform: userPlatformL.UserPlatform{},
+		userPlatformService: userPlatformService,
 	}
 }

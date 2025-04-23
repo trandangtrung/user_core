@@ -6,15 +6,15 @@ package role
 
 import (
 	"demo/api/role"
-	roleL "demo/internal/logic/role"
+	"demo/internal/service"
 )
 
 type ControllerV1 struct {
-	role roleL.Role
+	roleService service.RoleService
 }
 
-func NewV1() role.IRoleV1 {
+func NewV1(roleService service.RoleService) role.IRoleV1 {
 	return &ControllerV1{
-		role: roleL.Role{},
+		roleService: roleService,
 	}
 }

@@ -8,7 +8,7 @@ import (
 )
 
 func (c *ControllerV1) Update(ctx context.Context, req *v1.UpdateReq) (res *v1.UpdateRes, err error) {
-	res, err = c.userRole.Update(ctx, req)
+	res, err = c.userRoleService.Update(ctx, req)
 
 	if err != nil {
 		global.Logger.Error(ctx, err)

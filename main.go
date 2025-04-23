@@ -1,10 +1,9 @@
 package main
 
 import (
-	"demo/config"
-	"demo/internal/db"
 	"demo/internal/initialize"
 	_ "demo/internal/packed"
+	"demo/internal/storage/postgres"
 	"fmt"
 	"os"
 
@@ -19,23 +18,10 @@ func main() {
 
 		initialize.InitLogger(env)
 	} else {
-		fmt.Println("No environment argument provided")
+		fmt.Println("Please specify the environment (e.g., dev, test, prod) as the first argument.")
 	}
-
-	initialize.InitLoadConfig()
 	initialize.InitToken()
 
-	// init config
-	cfg := config.GetConfig()
-	fmt.Printf("Config: %v\n", cfg)
-
-	// init db
-	db := db.GetDatabaseConnection()
-	if db == nil {
-		fmt.Println("Failed to connect to the database")
-		return
-	}
-	defer db.Close()
-
 	cmd.Main.Run(gctx.GetInitCtx())
+	defer postgres.GetDatabaseConnection().Close()
 }

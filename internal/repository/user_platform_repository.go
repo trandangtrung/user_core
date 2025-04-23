@@ -9,11 +9,11 @@ import (
 
 type (
 	UserPlatformRepository interface {
-		Create(ctx context.Context, userPlatform *entity.UserPlatform) error
+		Create(ctx context.Context, userPlatform *entity.UserPlatform) (*entity.UserPlatform, error)
 		GetById(ctx context.Context, id int) (*entity.UserPlatform, error)
 		GetByUserId(ctx context.Context, userId int) ([]*entity.UserPlatform, error)
 		GetUser(ctx context.Context, id int) (*entity.User, error)
-		Update(ctx context.Context, userPlatform *entity.UserPlatform) error
+		Update(ctx context.Context, userPlatform *entity.UserPlatform) (*entity.UserPlatform, error)
 		Delete(ctx context.Context, userPlatform *entity.UserPlatform) error
 	}
 
@@ -28,8 +28,12 @@ func NewUserPlatformRepository(db *gorm.DB) UserPlatformRepository {
 	}
 }
 
-func (r *userPlatformRepository) Create(ctx context.Context, userPlatform *entity.UserPlatform) error {
-	return r.db.WithContext(ctx).Create(userPlatform).Error
+func (r *userPlatformRepository) Create(ctx context.Context, userPlatform *entity.UserPlatform) (*entity.UserPlatform, error) {
+	err := r.db.WithContext(ctx).Create(userPlatform).Error
+	if err != nil {
+		return nil, err
+	}
+	return userPlatform, nil
 }
 
 func (r *userPlatformRepository) GetById(ctx context.Context, id int) (*entity.UserPlatform, error) {
@@ -59,8 +63,12 @@ func (r *userPlatformRepository) GetUser(ctx context.Context, id int) (*entity.U
 	return userPlatform.User, nil
 }
 
-func (r *userPlatformRepository) Update(ctx context.Context, userPlatform *entity.UserPlatform) error {
-	return r.db.WithContext(ctx).Save(userPlatform).Error
+func (r *userPlatformRepository) Update(ctx context.Context, userPlatform *entity.UserPlatform) (*entity.UserPlatform, error) {
+	err := r.db.WithContext(ctx).Save(userPlatform).Error
+	if err != nil {
+		return nil, err
+	}
+	return userPlatform, nil
 }
 
 func (r *userPlatformRepository) Delete(ctx context.Context, userPlatform *entity.UserPlatform) error {

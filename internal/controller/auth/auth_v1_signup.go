@@ -8,7 +8,7 @@ import (
 )
 
 func (c *ControllerV1) Signup(ctx context.Context, req *v1.SignupReq) (res *v1.SignupRes, err error) {
-	res, err = c.authLogic.Signup(ctx, req)
+	res, err = c.authService.Signup(ctx, req)
 
 	if err != nil {
 		global.Logger.Error(ctx, err)

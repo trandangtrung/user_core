@@ -8,7 +8,7 @@ import (
 )
 
 func (c *ControllerV1) RefreshToken(ctx context.Context, req *v1.RefreshTokenReq) (res *v1.RefreshTokenRes, err error) {
-	res, err = c.authLogic.RefreshToken(ctx, req)
+	res, err = c.authService.RefreshToken(ctx, req)
 
 	if err != nil {
 		global.Logger.Error(ctx, err)

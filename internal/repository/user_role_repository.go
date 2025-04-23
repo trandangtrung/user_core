@@ -9,9 +9,9 @@ import (
 
 type (
 	UserRoleRepository interface {
-		Create(ctx context.Context, userRole *entity.UserRole) error
+		Create(ctx context.Context, userRole *entity.UserRole) (*entity.UserRole, error)
 		GetById(ctx context.Context, id int) (*entity.UserRole, error)
-		Update(ctx context.Context, userRole *entity.UserRole) error
+		Update(ctx context.Context, userRole *entity.UserRole) (*entity.UserRole, error)
 		Delete(ctx context.Context, id int) error
 	}
 
@@ -26,8 +26,12 @@ func NewUserRoleRepository(db *gorm.DB) UserRoleRepository {
 	}
 }
 
-func (r *userRoleRepository) Create(ctx context.Context, userRole *entity.UserRole) error {
-	return r.db.WithContext(ctx).Create(userRole).Error
+func (r *userRoleRepository) Create(ctx context.Context, userRole *entity.UserRole) (*entity.UserRole, error) {
+	err := r.db.WithContext(ctx).Create(userRole).Error
+	if err != nil {
+		return nil, err
+	}
+	return userRole, nil
 }
 
 func (r *userRoleRepository) GetById(ctx context.Context, id int) (*entity.UserRole, error) {
@@ -39,8 +43,12 @@ func (r *userRoleRepository) GetById(ctx context.Context, id int) (*entity.UserR
 	return &userRole, nil
 }
 
-func (r *userRoleRepository) Update(ctx context.Context, userRole *entity.UserRole) error {
-	return r.db.WithContext(ctx).Save(userRole).Error
+func (r *userRoleRepository) Update(ctx context.Context, userRole *entity.UserRole) (*entity.UserRole, error) {
+	err := r.db.WithContext(ctx).Save(userRole).Error
+	if err != nil {
+		return nil, err
+	}
+	return userRole, nil
 }
 
 func (r *userRoleRepository) Delete(ctx context.Context, id int) error {

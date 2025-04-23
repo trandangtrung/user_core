@@ -10,7 +10,7 @@ import (
 func (c *ControllerV1) Create(ctx context.Context, req *v1.CreateReq) (res *v1.CreateRes, err error) {
 	global.Logger.Debug(ctx, req)
 
-	res, err = c.userRole.Create(ctx, req)
+	res, err = c.userRoleService.Create(ctx, req)
 
 	if err != nil {
 		global.Logger.Error(ctx, err)

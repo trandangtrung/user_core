@@ -9,27 +9,52 @@ import (
 	"demo/internal/controller/userPlatform"
 	"demo/internal/controller/userRole"
 	"demo/internal/middleware"
+	"demo/internal/repository"
 	adminRouter "demo/internal/router/admin"
 	buyerRouter "demo/internal/router/buyer"
 	sellerRouter "demo/internal/router/seller"
+	"demo/internal/service"
+	"demo/internal/storage/postgres"
 
 	"github.com/gogf/gf/v2/net/ghttp"
 )
 
 func Router(r *ghttp.RouterGroup) {
-	middleware := middleware.NewMiddleware()
+
+	// init database
+	db := postgres.GetDatabaseConnection().Connection
+
+	// init repository
+	platformRepo := repository.NewPlatformRepository(db)
+	roleRepo := repository.NewRoleRepository(db)
+	tokenRepo := repository.NewTokenRepository(db)
+	userPlatformRepo := repository.NewUserPlatformRepository(db)
+	userRoleRepo := repository.NewUserRoleRepository(db)
+	userRepo := repository.NewUserRepository(db)
+
+	// init logic
+	authService := service.NewAuthService(userRepo, roleRepo, tokenRepo)
+	platformService := service.NewPlatformService(platformRepo)
+	roleService := service.NewRoleService(roleRepo)
+	tokenService := service.NewTokenService(tokenRepo)
+	userPlatformService := service.NewUserPlatformService(userPlatformRepo)
+	userRoleService := service.NewUserRoleService(userRoleRepo)
 
 	// init controller
-	authC := auth.NewV1()
-	userC := user.NewV1()
-	roleC := role.NewV1()
-	userRoleC := userRole.NewV1()
-	tokenC := token.NewV1()
-	platformC := platform.NewV1()
-	userPlatformC := userPlatform.NewV1()
+	authController := auth.NewV1(authService)
+	platformController := platform.NewV1(platformService)
+	roleController := role.NewV1(roleService)
+	tokenController := token.NewV1(tokenService)
+	userController := user.NewV1()
+	userPlatformController := userPlatform.NewV1(userPlatformService)
+	userRoleController := userRole.NewV1(userRoleService)
+
+	// init middleware
+	middleware := middleware.NewMiddleware()
 
 	// register router
 	adminRouter.Register(r)
-	buyerRouter.Register(r, middleware, authC, userC, roleC, userRoleC, tokenC, platformC, userPlatformC)
+	buyerRouter.Register(r, middleware, authController, userController, roleController,
+		userRoleController, tokenController, platformController, userPlatformController)
 	sellerRouter.Register(r, middleware)
 }

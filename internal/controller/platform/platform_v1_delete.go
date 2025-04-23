@@ -8,7 +8,7 @@ import (
 )
 
 func (c *ControllerV1) Delete(ctx context.Context, req *v1.DeleteReq) (res *v1.DeleteRes, err error) {
-	err = c.platform.Delete(ctx, req.Id)
+	err = c.platformService.Delete(ctx, req.Id)
 
 	if err != nil {
 		global.Logger.Error(ctx, err)
