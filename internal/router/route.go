@@ -52,6 +52,7 @@ func Router(r *ghttp.RouterGroup) {
 	// init middleware
 	middleware := middleware.NewMiddleware()
 
+	r.Middleware(ghttp.MiddlewareHandlerResponse)
 	// register router
 	adminRouter.Register(r)
 	buyerRouter.Register(r, middleware, authController, userController, roleController,

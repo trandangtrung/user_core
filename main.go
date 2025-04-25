@@ -21,7 +21,9 @@ func main() {
 		fmt.Println("Please specify the environment (e.g., dev, test, prod) as the first argument.")
 	}
 	initialize.InitToken()
+	postgres.GetDatabaseConnection().Seed()
 
 	cmd.Main.Run(gctx.GetInitCtx())
+
 	defer postgres.GetDatabaseConnection().Close()
 }
