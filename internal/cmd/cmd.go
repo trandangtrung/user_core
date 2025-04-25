@@ -3,11 +3,12 @@ package cmd
 import (
 	"context"
 
+	_ "github.com/gogf/gf/contrib/drivers/pgsql/v2"
 	"github.com/gogf/gf/v2/frame/g"
-	"github.com/gogf/gf/v2/net/ghttp"
 	"github.com/gogf/gf/v2/os/gcmd"
 
-	"strongbody-api/internal/controller/hello"
+	"demo/internal/config"
+	"demo/internal/router"
 )
 
 var (
@@ -17,12 +18,11 @@ var (
 		Brief: "start http server",
 		Func: func(ctx context.Context, parser *gcmd.Parser) (err error) {
 			s := g.Server()
-			s.Group("/", func(group *ghttp.RouterGroup) {
-				group.Middleware(ghttp.MiddlewareHandlerResponse)
-				group.Bind(
-					hello.NewV1(),
-				)
-			})
+			s.SetPort(config.GetConfig().ServerCfg.Port)
+
+			r := s.Group("/api/v1")
+			router.Router(r)
+
 			s.Run()
 			return nil
 		},
