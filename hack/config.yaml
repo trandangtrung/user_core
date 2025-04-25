@@ -1,9 +1,13 @@
 # CLI tool, only in development environment.
+server:
+    address:     ":8000"
+    openapiPath: "/api.json"
+    swaggerPath: "/swagger"
 # https://goframe.org/docs/cli
 gfcli:
     gen:
         dao:
-            - link: "pgsql:root:secret@tcp(localhost:5432)/CORE_USER"
+            - link: "pgsql:postgres:123456@tcp(localhost:5432)/CORE_USER"
               descriptionTag: true
 
     docker:

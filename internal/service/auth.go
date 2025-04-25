@@ -49,7 +49,6 @@ func (a *authService) Login(ctx context.Context, req *v1.LoginReq) (res *v1.Logi
 		return nil, fmt.Errorf("password is wrong")
 	}
 
-	// sau get role để đổi vô
 	accessToken, _, err := global.Token.CreateToken(int(user.ID), "", config.GetConfig().JwtCfg.TimeAccess)
 	if err != nil {
 		return nil, err

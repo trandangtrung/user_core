@@ -10,9 +10,9 @@ import (
 type (
 	PlatformRepository interface {
 		Create(ctx context.Context, platform *entity.Platform) (*entity.Platform, error)
-		GetByID(ctx context.Context, id uint) (*entity.Platform, error)
+		GetByID(ctx context.Context, id int64) (*entity.Platform, error)
 		Update(ctx context.Context, platform *entity.Platform) (*entity.Platform, error)
-		Delete(ctx context.Context, id uint) error
+		Delete(ctx context.Context, id int64) error
 	}
 
 	platformRepository struct {
@@ -31,7 +31,7 @@ func (r *platformRepository) Create(ctx context.Context, platform *entity.Platfo
 	return platform, nil
 }
 
-func (r *platformRepository) GetByID(ctx context.Context, id uint) (*entity.Platform, error) {
+func (r *platformRepository) GetByID(ctx context.Context, id int64) (*entity.Platform, error) {
 	var platform entity.Platform
 	if err := r.db.WithContext(ctx).First(&platform, id).Error; err != nil {
 		return nil, err
@@ -40,13 +40,15 @@ func (r *platformRepository) GetByID(ctx context.Context, id uint) (*entity.Plat
 }
 
 func (r *platformRepository) Update(ctx context.Context, platform *entity.Platform) (*entity.Platform, error) {
-	if err := r.db.WithContext(ctx).Save(platform).Error; err != nil {
+	if err := r.db.WithContext(ctx).Model(&entity.Platform{}).
+		Where("id = ?", platform.ID).
+		Updates(platform).Error; err != nil {
 		return nil, err
 	}
 	return platform, nil
 }
 
-func (r *platformRepository) Delete(ctx context.Context, id uint) error {
+func (r *platformRepository) Delete(ctx context.Context, id int64) error {
 	if err := r.db.WithContext(ctx).Delete(&entity.Platform{}, id).Error; err != nil {
 		return err
 	}
