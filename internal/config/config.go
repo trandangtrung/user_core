@@ -64,9 +64,9 @@ func load() (*Config, error) {
 	dbConfig := DatabaseConfig{
 		Host:     getEnv("DB_HOST", "localhost"),
 		Port:     getEnv("DB_PORT", "5432"),
-		User:     getEnv("DB_USER", "user"),
-		Password: getEnv("DB_PASSWORD", "password"),
-		DbName:   getEnv("DB_NAME", "core_user"),
+		User:     getEnv("DB_USER", "postgres"),
+		Password: getEnv("DB_PASSWORD", "root"),
+		DbName:   getEnv("DB_NAME", "user_core"),
 		SSLMode:  getEnv("DB_SSLMODE", "disable"),
 		TimeZone: getEnv("DB_TIMEZONE", "UTC"),
 	}
