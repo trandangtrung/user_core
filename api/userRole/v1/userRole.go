@@ -9,8 +9,9 @@ type userRole struct {
 }
 
 type GetReq struct {
-	g.Meta `path:"/user-role/{id}" method:"get" tags:"userRole" summary:"Get userRole"`
-	Id     int64 `json:"id" v:"required"`
+	g.Meta `path:"/user-role/{id}" method:"get" tags:"user_role" summary:"Get userRole"`
+	Scope  string `in:"header" name:"Scope" default:"network" summary:"Scope"`
+	Id     int64  `json:"id" v:"required"`
 }
 
 type GetRes struct {
@@ -24,9 +25,10 @@ type GetRes struct {
 }
 
 type CreateReq struct {
-	g.Meta `path:"/user-role" method:"post" tags:"userRole" summary:"Create userRole"`
-	UserId int64 `json:"userId" v:"required"`
-	RoleId int64 `json:"RoleId" v:"required"`
+	g.Meta `path:"/user-role" method:"post" tags:"user_role" summary:"Create userRole"`
+	Scope  string `in:"header" name:"Scope" default:"network" summary:"Scope"`
+	UserId int64  `json:"userId" v:"required"`
+	RoleId int64  `json:"RoleId" v:"required"`
 }
 
 type CreateRes struct {
@@ -38,10 +40,11 @@ type CreateRes struct {
 }
 
 type UpdateReq struct {
-	g.Meta `path:"/user-role/{id}" method:"patch" tags:"userRole" summary:"Update userRole"`
-	Id     int64 `json:"id" v:"required"`
-	UserId int64 `json:"userId" v:"required"`
-	RoleId int64 `json:"RoleId" v:"required"`
+	g.Meta `path:"/user-role/{id}" method:"patch" tags:"user_role" summary:"Update userRole"`
+	Scope  string `in:"header" name:"Scope" default:"network" summary:"Scope"`
+	Id     int64  `json:"id" v:"required"`
+	UserId int64  `json:"userId" v:"required"`
+	RoleId int64  `json:"RoleId" v:"required"`
 }
 
 type UpdateRes struct {
@@ -53,8 +56,9 @@ type UpdateRes struct {
 }
 
 type DeleteReq struct {
-	g.Meta `path:"/user-role/{id}" method:"delete" tags:"userRole" summary:"Delete userRole"`
-	Id     int64 `json:"id" v:"required"`
+	g.Meta `path:"/user-role/{id}" method:"delete" tags:"user_role" summary:"Delete userRole"`
+	Scope  string `in:"header" name:"Scope" default:"network" summary:"Scope"`
+	Id     int64  `json:"id" v:"required"`
 }
 
 type DeleteRes struct {

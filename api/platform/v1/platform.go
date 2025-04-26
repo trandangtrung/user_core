@@ -10,7 +10,8 @@ type platform struct {
 
 type GetReq struct {
 	g.Meta `path:"/platform/{id}" method:"get" tags:"platform" summary:"Get platform"`
-	Id     int64 `json:"id" v:"required"`
+	Scope  string `in:"header" name:"Scope" default:"network" summary:"Scope"`
+	Id     int64  `json:"id" v:"required"`
 }
 
 type GetRes struct {
@@ -25,6 +26,7 @@ type GetRes struct {
 
 type CreateReq struct {
 	g.Meta `path:"/platform" method:"post" tags:"platform" summary:"Create platform"`
+	Scope  string `in:"header" name:"Scope" default:"network" summary:"Scope"`
 	Name   string `json:"name" v:"required"`
 	Config string `json:"config" v:"required"`
 }
@@ -39,6 +41,7 @@ type CreateRes struct {
 
 type UpdateReq struct {
 	g.Meta `path:"/platform/{id}" method:"patch" tags:"platform" summary:"Update platform"`
+	Scope  string `in:"header" name:"Scope" default:"network" summary:"Scope"`
 	Id     int64  `json:"id" v:"required"`
 	Name   string `json:"name" v:"required"`
 	Config string `json:"config" v:"required"`
@@ -54,7 +57,8 @@ type UpdateRes struct {
 
 type DeleteReq struct {
 	g.Meta `path:"/platform/{id}" method:"delete" tags:"platform" summary:"Delete platform"`
-	Id     int64 `json:"id" v:"required"`
+	Scope  string `in:"header" name:"Scope" default:"network" summary:"Scope"`
+	Id     int64  `json:"id" v:"required"`
 }
 
 type DeleteRes struct {

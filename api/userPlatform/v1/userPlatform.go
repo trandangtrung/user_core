@@ -5,12 +5,10 @@ import (
 	"github.com/gogf/gf/v2/os/gtime"
 )
 
-type userPlatform struct {
-}
-
 type GetReq struct {
-	g.Meta `path:"/user-platform/{id}" method:"get" tags:"userPlatform" summary:"Get userPlatform"`
-	Id     int64 `json:"id" v:"required"`
+	g.Meta `path:"/user-platform/{id}" method:"get" tags:"user_platform" summary:"Get userPlatform"`
+	Scope  string `in:"header" name:"Scope" default:"network" summary:"Scope"`
+	Id     int64  `json:"id" v:"required"`
 }
 
 type GetRes struct {
@@ -24,9 +22,10 @@ type GetRes struct {
 }
 
 type CreateReq struct {
-	g.Meta     `path:"/user-platform" method:"post" tags:"userPlatform" summary:"Create userPlatform"`
-	UserId     int64 `json:"userId" v:"required"`
-	PlatformId int64 `json:"platformId" v:"required"`
+	g.Meta     `path:"/user-platform" method:"post" tags:"user_platform" summary:"Create userPlatform"`
+	Scope      string `in:"header" name:"Scope" default:"network" summary:"Scope"`
+	UserId     int64  `json:"userId" v:"required"`
+	PlatformId int64  `json:"platformId" v:"required"`
 }
 
 type CreateRes struct {
@@ -38,10 +37,11 @@ type CreateRes struct {
 }
 
 type UpdateReq struct {
-	g.Meta     `path:"/user-platform/{id}" method:"patch" tags:"userPlatform" summary:"Update userPlatform"`
-	Id         int64 `json:"id" v:"required"`
-	UserId     int64 `json:"userId" v:"required"`
-	PlatformId int64 `json:"platformId" v:"required"`
+	g.Meta     `path:"/user-platform/{id}" method:"patch" tags:"user_platform" summary:"Update userPlatform"`
+	Scope      string `in:"header" name:"Scope" default:"network" summary:"Scope"`
+	Id         int64  `json:"id" v:"required"`
+	UserId     int64  `json:"userId" v:"required"`
+	PlatformId int64  `json:"platformId" v:"required"`
 }
 
 type UpdateRes struct {
@@ -53,8 +53,9 @@ type UpdateRes struct {
 }
 
 type DeleteReq struct {
-	g.Meta `path:"/user-platform/{id}" method:"delete" tags:"userPlatform" summary:"Delete userPlatform"`
-	Id     int64 `json:"id" v:"required"`
+	g.Meta `path:"/user-platform/{id}" method:"delete" tags:"user_platform" summary:"Delete userPlatform"`
+	Scope  string `in:"header" name:"Scope" default:"network" summary:"Scope"`
+	Id     int64  `json:"id" v:"required"`
 }
 
 type DeleteRes struct {

@@ -54,7 +54,7 @@ func (r *userRepository) GetByEmail(ctx context.Context, email string) (*entity.
 }
 
 func (r *userRepository) Update(ctx context.Context, user *entity.User) (*entity.User, error) {
-	if err := r.db.WithContext(ctx).Save(user).Error; err != nil {
+	if err := r.db.WithContext(ctx).Where("id = ?", user.ID).Updates(user).Error; err != nil {
 		return nil, err
 	}
 	return user, nil
