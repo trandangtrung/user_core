@@ -39,13 +39,14 @@ func Router(r *ghttp.RouterGroup) {
 	tokenService := service.NewTokenService(tokenRepo)
 	userPlatformService := service.NewUserPlatformService(userPlatformRepo)
 	userRoleService := service.NewUserRoleService(userRoleRepo)
+	userService := service.NewUserService(userRepo)
 
 	// init controller
 	authController := auth.NewV1(authService)
 	platformController := platform.NewV1(platformService)
 	roleController := role.NewV1(roleService)
 	tokenController := token.NewV1(tokenService)
-	userController := user.NewV1()
+	userController := user.NewV1(userService)
 	userPlatformController := userPlatform.NewV1(userPlatformService)
 	userRoleController := userRole.NewV1(userRoleService)
 

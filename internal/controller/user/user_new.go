@@ -6,10 +6,15 @@ package user
 
 import (
 	"demo/api/user"
+	"demo/internal/service"
 )
 
-type ControllerV1 struct{}
+type ControllerV1 struct {
+	userService service.UserService
+}
 
-func NewV1() user.IUserV1 {
-	return &ControllerV1{}
+func NewV1(userService service.UserService) user.IUserV1 {
+	return &ControllerV1{
+		userService: userService,
+	}
 }

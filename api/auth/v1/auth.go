@@ -15,7 +15,8 @@ type Token struct {
 }
 
 type LoginReq struct {
-	g.Meta   `path:"/login" method:"post" tags:"Auth" summary:"Login user"`
+	g.Meta   `path:"/login" method:"post" tags:"auth" summary:"Login user"`
+	Scope    string `in:"header" name:"Scope" default:"network" summary:"Scope"`
 	Email    string `json:"email" v:"required|email"`
 	Password string `json:"password" v:"password"`
 }
@@ -26,7 +27,7 @@ type LoginRes struct {
 }
 
 type SignupReq struct {
-	g.Meta   `path:"/signup" method:"post" tags:"Auth" summary:"Sign up user"`
+	g.Meta   `path:"/signup" method:"post" tags:"auth" summary:"Sign up user"`
 	Email    string `json:"email" v:"required|email"`
 	Password string `json:"password" v:"password"`
 }
@@ -36,7 +37,8 @@ type SignupRes struct {
 }
 
 type RefreshTokenReq struct {
-	g.Meta `path:"/refresh-token" method:"get" tags:"Auth" summary:"refresh token"`
+	g.Meta `path:"/refresh-token" method:"get" tags:"auth" summary:"refresh token"`
+	Scope  string `in:"header" name:"Scope" default:"network" summary:"Scope"`
 }
 
 type RefreshTokenRes struct {
