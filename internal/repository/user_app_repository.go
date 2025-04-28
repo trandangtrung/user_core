@@ -9,12 +9,10 @@ import (
 
 type (
 	UserAppRepository interface {
-		Create(ctx context.Context, userApp *entity.UserApp) (*entity.UserApp, error)
-		GetById(ctx context.Context, id int) (*entity.UserApp, error)
-		GetByUserId(ctx context.Context, userId int) ([]*entity.UserApp, error)
-		GetUser(ctx context.Context, id int) (*entity.User, error)
-		Update(ctx context.Context, userApp *entity.UserApp) (*entity.UserApp, error)
-		Delete(ctx context.Context, userApp *entity.UserApp) error
+		Create(ctx context.Context, userApp *entity.UserApps) (*entity.UserApps, error)
+		GetById(ctx context.Context, id int) (*entity.UserApps, error)
+		Update(ctx context.Context, userApp *entity.UserApps) (*entity.UserApps, error)
+		Delete(ctx context.Context, userApp *entity.UserApps) error
 	}
 
 	userAppRepository struct {
@@ -28,7 +26,7 @@ func NewUserAppRepository(db *gorm.DB) UserAppRepository {
 	}
 }
 
-func (r *userAppRepository) Create(ctx context.Context, userApp *entity.UserApp) (*entity.UserApp, error) {
+func (r *userAppRepository) Create(ctx context.Context, userApp *entity.UserApps) (*entity.UserApps, error) {
 	err := r.db.WithContext(ctx).Create(userApp).Error
 	if err != nil {
 		return nil, err
@@ -36,8 +34,8 @@ func (r *userAppRepository) Create(ctx context.Context, userApp *entity.UserApp)
 	return userApp, nil
 }
 
-func (r *userAppRepository) GetById(ctx context.Context, id int) (*entity.UserApp, error) {
-	var userApp entity.UserApp
+func (r *userAppRepository) GetById(ctx context.Context, id int) (*entity.UserApps, error) {
+	var userApp entity.UserApps
 	err := r.db.WithContext(ctx).Where("id = ?", id).First(&userApp).Error
 	if err != nil {
 		return nil, err
@@ -45,25 +43,7 @@ func (r *userAppRepository) GetById(ctx context.Context, id int) (*entity.UserAp
 	return &userApp, nil
 }
 
-func (r *userAppRepository) GetByUserId(ctx context.Context, userId int) ([]*entity.UserApp, error) {
-	var userApp []*entity.UserApp
-	err := r.db.WithContext(ctx).Where("user_id = ?", userId).Find(&userApp).Error
-	if err != nil {
-		return nil, err
-	}
-	return userApp, nil
-}
-
-func (r *userAppRepository) GetUser(ctx context.Context, id int) (*entity.User, error) {
-	var userApp entity.UserApp
-	err := r.db.WithContext(ctx).Preload("User").Where("id = ?", id).First(&userApp).Error
-	if err != nil {
-		return nil, err
-	}
-	return userApp.User, nil
-}
-
-func (r *userAppRepository) Update(ctx context.Context, userApp *entity.UserApp) (*entity.UserApp, error) {
+func (r *userAppRepository) Update(ctx context.Context, userApp *entity.UserApps) (*entity.UserApps, error) {
 	err := r.db.WithContext(ctx).Save(userApp).Error
 	if err != nil {
 		return nil, err
@@ -71,6 +51,6 @@ func (r *userAppRepository) Update(ctx context.Context, userApp *entity.UserApp)
 	return userApp, nil
 }
 
-func (r *userAppRepository) Delete(ctx context.Context, userApp *entity.UserApp) error {
+func (r *userAppRepository) Delete(ctx context.Context, userApp *entity.UserApps) error {
 	return r.db.WithContext(ctx).Delete(userApp).Error
 }

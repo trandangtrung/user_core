@@ -19,7 +19,7 @@ type GetRes struct {
 	Name        string      `json:"name" v:"required"`
 	Description string      `json:"description" v:"required"`
 	CreatedAt   *gtime.Time `json:"created_at"`
-	CreatedBy   *uint        `json:"created_by"`
+	CreatedBy   *uint       `json:"created_by"`
 	UpdatedAt   *gtime.Time `json:"updated_at"`
 	UpdatedBy   uint        `json:"updated_by"`
 }
@@ -38,7 +38,7 @@ type CreateRes struct {
 	Name        string      `json:"name"`
 	Description string      `json:"description"`
 	CreatedAt   *gtime.Time `json:"created_at"`
-	CreatedBy   *uint        `json:"created_by"`
+	CreatedBy   *uint       `json:"created_by"`
 }
 
 type UpdateReq struct {

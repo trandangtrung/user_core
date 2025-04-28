@@ -41,6 +41,16 @@ type RefreshTokenReq struct {
 	Scope  string `in:"header" name:"Scope" default:"network" summary:"Scope"`
 }
 
+type LoginByTokenReq struct {
+	g.Meta `path:"/login-by-token" method:"post" tags:"auth" summary:"Login by token"`
+	Scope  string `in:"header" name:"Scope" default:"network" summary:"Scope"`
+}
+
+type LoginByTokenRes struct {
+	User  User  `json:"user"`
+	Token Token `json:"token"`
+}
+
 type RefreshTokenRes struct {
 	AccessToken string
 }

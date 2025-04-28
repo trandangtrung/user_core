@@ -11,9 +11,7 @@ type (
 	TokenRepository interface {
 		Create(ctx context.Context, token *entity.Token) (*entity.Token, error)
 		GetByID(ctx context.Context, id uint) (*entity.Token, error)
-		GetByUserID(ctx context.Context, userID uint) (*entity.Token, error)
 		GetByToken(ctx context.Context, token string) (*entity.Token, error)
-		GetUser(ctx context.Context, id uint) (*entity.User, error)
 		Update(ctx context.Context, token *entity.Token) (*entity.Token, error)
 		Delete(ctx context.Context, id uint) error
 	}
@@ -42,28 +40,12 @@ func (r *tokenRepository) GetByID(ctx context.Context, id uint) (*entity.Token, 
 	return &token, nil
 }
 
-func (r *tokenRepository) GetByUserID(ctx context.Context, userID uint) (*entity.Token, error) {
-	var token entity.Token
-	if err := r.db.WithContext(ctx).Where("user_id = ?", userID).First(&token).Error; err != nil {
-		return nil, err
-	}
-	return &token, nil
-}
-
 func (r *tokenRepository) GetByToken(ctx context.Context, token string) (*entity.Token, error) {
 	var t entity.Token
 	if err := r.db.WithContext(ctx).Where("refresh_token = ?", token).First(&t).Error; err != nil {
 		return nil, err
 	}
 	return &t, nil
-}
-
-func (r *tokenRepository) GetUser(ctx context.Context, id uint) (*entity.User, error) {
-	var token entity.Token
-	if err := r.db.WithContext(ctx).Preload("User").First(&token, id).Error; err != nil {
-		return nil, err
-	}
-	return token.User, nil
 }
 
 func (r *tokenRepository) Update(ctx context.Context, token *entity.Token) (*entity.Token, error) {

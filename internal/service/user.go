@@ -9,6 +9,7 @@ import (
 
 type (
 	UserService interface {
+		Create(ctx context.Context, req *v1.CreateReq) (*v1.CreateRes, error)
 		GetByID(ctx context.Context, req *v1.GetReq) (res *v1.GetRes, err error)
 		Update(ctx context.Context, req *v1.UpdateReq) (res *v1.UpdateRes, err error)
 		Delete(ctx context.Context, req *v1.DeleteReq) (res *v1.DeleteRes, err error)
@@ -22,6 +23,16 @@ func NewUserService(userRepo repository.UserRepository) UserService {
 	return &userService{
 		userRepo: userRepo,
 	}
+}
+
+func (u *userService) Create(ctx context.Context, req *v1.CreateReq) (*v1.CreateRes, error) {
+	// create user
+
+	// assign user - role
+
+	// assign user - app
+	
+	return &v1.CreateRes{}
 }
 
 func (u *userService) GetByID(ctx context.Context, req *v1.GetReq) (res *v1.GetRes, err error) {

@@ -21,6 +21,7 @@ type (
 		Login(ctx context.Context, req *v1.LoginReq) (res *v1.LoginRes, err error)
 		Signup(ctx context.Context, req *v1.SignupReq) (res *v1.SignupRes, err error)
 		RefreshToken(ctx context.Context, req *v1.RefreshTokenReq) (res *v1.RefreshTokenRes, err error)
+		LoginByToken(ctx context.Context, req *v1.LoginByTokenReq) (res *v1.LoginByTokenRes, err error)
 	}
 	authService struct {
 		userRepo  repository.UserRepository
@@ -51,12 +52,12 @@ func (a *authService) Login(ctx context.Context, req *v1.LoginReq) (res *v1.Logi
 
 	accessToken, _, err := global.Token.CreateToken(int(user.ID), "", config.GetConfig().JwtCfg.TimeAccess)
 	if err != nil {
-		return nil, err
+		return nil, gerror.NewCode(gcode.CodeInternalError, err.Error())
 	}
 
 	refreshToken, _, err := global.Token.CreateToken(int(user.ID), "", config.GetConfig().JwtCfg.TimeRefresh)
 	if err != nil {
-		return nil, err
+		return nil, gerror.NewCode(gcode.CodeInternalError, err.Error())
 	}
 
 	scope := ctx.Value(consts.AuthorizationScope).(string)
@@ -82,6 +83,60 @@ func (a *authService) Login(ctx context.Context, req *v1.LoginReq) (res *v1.Logi
 	}
 
 	return &v1.LoginRes{
+		User: v1.User{
+			Email: user.Email,
+			Role:  roles[0].Name,
+		},
+		Token: v1.Token{
+			AccessToken:  accessToken,
+			RefreshToken: token.RefreshToken,
+		},
+	}, nil
+}
+
+func (a *authService) LoginByToken(ctx context.Context, req *v1.LoginByTokenReq) (res *v1.LoginByTokenRes, err error) {
+
+	payload, _ := ctx.Value(consts.AuthorizationKey).(*token.Payload)
+
+	user, err := a.userRepo.GetByID(ctx, uint(payload.Id))
+
+	if err != nil {
+		return nil, gerror.NewCode(gcode.CodeNotFound, "user is not exist")
+	}
+
+	accessToken, _, err := global.Token.CreateToken(payload.Id, "", config.GetConfig().JwtCfg.TimeAccess)
+	if err != nil {
+		return nil, gerror.NewCode(gcode.CodeInternalError, err.Error())
+	}
+
+	refreshToken, _, err := global.Token.CreateToken(payload.Id, "", config.GetConfig().JwtCfg.TimeRefresh)
+	if err != nil {
+		return nil, gerror.NewCode(gcode.CodeInternalError, err.Error())
+	}
+
+	scope := ctx.Value(consts.AuthorizationScope).(string)
+
+	roles, err := a.roleRepo.GetRolesByUserIDAndPlatformName(ctx, scope, uint(payload.Id))
+	if err != nil {
+		return nil, err
+	}
+	if roles == nil {
+		return nil, gerror.NewCode(gcode.CodeNotFound, "role is not exist")
+	}
+	if len(roles) == 0 {
+		return nil, gerror.NewCode(gcode.CodeNotFound, "role is not exist")
+	}
+
+	token, err := a.tokenRepo.Create(ctx, &entity.Token{
+		UserID:       uint(payload.Id),
+		RefreshToken: refreshToken,
+		Scope:        scope,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	return &v1.LoginByTokenRes{
 		User: v1.User{
 			Email: user.Email,
 			Role:  roles[0].Name,

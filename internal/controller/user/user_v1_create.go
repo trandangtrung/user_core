@@ -1,4 +1,4 @@
-package token
+package user
 
 import (
 	"context"
@@ -6,9 +6,9 @@ import (
 	"github.com/gogf/gf/v2/errors/gcode"
 	"github.com/gogf/gf/v2/errors/gerror"
 
-	"demo/api/token/v1"
+	"demo/api/user/v1"
 )
 
-func (c *ControllerV1) Get(ctx context.Context, req *v1.GetReq) (res *v1.GetRes, err error) {
+func (c *ControllerV1) Create(ctx context.Context, req *v1.CreateReq) (res *v1.CreateRes, err error) {
 	return nil, gerror.NewCode(gcode.CodeNotImplemented)
 }

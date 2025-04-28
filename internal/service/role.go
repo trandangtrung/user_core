@@ -49,7 +49,7 @@ func (s *roleService) Get(ctx context.Context, req *v1.GetReq) (*v1.GetRes, erro
 		Name:        role.Name,
 		Description: role.Description,
 		CreatedBy:   role.CreatedBy,
-		UpdatedBy:   role.UpdatedBy,
+		UpdatedBy:   *role.UpdatedBy,
 	}, nil
 }
 
@@ -97,7 +97,7 @@ func (s *roleService) Update(ctx context.Context, req *v1.UpdateReq) (*v1.Update
 	if req.Description != "" {
 		existingRole.Description = req.Description
 	}
-	existingRole.UpdatedBy = req.UpdatedBy
+	existingRole.UpdatedBy = &req.UpdatedBy
 
 	updated, err := s.roleRepo.Update(ctx, existingRole)
 	if err != nil {
@@ -109,7 +109,7 @@ func (s *roleService) Update(ctx context.Context, req *v1.UpdateReq) (*v1.Update
 		AppId:       updated.AppID,
 		Name:        updated.Name,
 		Description: updated.Description,
-		UpdatedBy:   updated.UpdatedBy,
+		UpdatedBy:   *updated.UpdatedBy,
 		UpdatedAt:   gtime.NewFromTime(updated.UpdatedAt),
 	}, nil
 }
