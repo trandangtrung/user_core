@@ -1,12 +1,12 @@
 package router
 
 import (
+	"demo/internal/controller/app"
 	"demo/internal/controller/auth"
-	"demo/internal/controller/platform"
 	"demo/internal/controller/role"
 	"demo/internal/controller/token"
 	"demo/internal/controller/user"
-	"demo/internal/controller/userPlatform"
+	"demo/internal/controller/userApp"
 	"demo/internal/controller/userRole"
 	"demo/internal/middleware"
 	"demo/internal/repository"
@@ -25,38 +25,39 @@ func Router(r *ghttp.RouterGroup) {
 	db := postgres.GetDatabaseConnection().Connection
 
 	// init repository
-	platformRepo := repository.NewPlatformRepository(db)
+	appRepo := repository.NewAppRepository(db)
 	roleRepo := repository.NewRoleRepository(db)
 	tokenRepo := repository.NewTokenRepository(db)
-	userPlatformRepo := repository.NewUserPlatformRepository(db)
+	userAppRepo := repository.NewUserAppRepository(db)
 	userRoleRepo := repository.NewUserRoleRepository(db)
 	userRepo := repository.NewUserRepository(db)
 
 	// init logic
 	authService := service.NewAuthService(userRepo, roleRepo, tokenRepo)
-	platformService := service.NewPlatformService(platformRepo)
+	appService := service.NewAppService(appRepo)
 	roleService := service.NewRoleService(roleRepo)
 	tokenService := service.NewTokenService(tokenRepo)
-	userPlatformService := service.NewUserPlatformService(userPlatformRepo)
+	userAppService := service.NewUserAppService(userAppRepo)
 	userRoleService := service.NewUserRoleService(userRoleRepo)
 	userService := service.NewUserService(userRepo)
 
 	// init controller
 	authController := auth.NewV1(authService)
-	platformController := platform.NewV1(platformService)
+	appController := app.NewV1(appService)
 	roleController := role.NewV1(roleService)
 	tokenController := token.NewV1(tokenService)
 	userController := user.NewV1(userService)
-	userPlatformController := userPlatform.NewV1(userPlatformService)
+	userAppController := userApp.NewV1(userAppService)
 	userRoleController := userRole.NewV1(userRoleService)
 
 	// init middleware
 	middleware := middleware.NewMiddleware()
 
 	r.Middleware(ghttp.MiddlewareHandlerResponse)
+
 	// register router
 	adminRouter.Register(r)
 	buyerRouter.Register(r, middleware, authController, userController, roleController,
-		userRoleController, tokenController, platformController, userPlatformController)
+		userRoleController, tokenController, appController, userAppController)
 	sellerRouter.Register(r, middleware)
 }

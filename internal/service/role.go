@@ -5,6 +5,7 @@ import (
 	v1 "demo/api/role/v1"
 	"demo/internal/entity"
 	"demo/internal/repository"
+
 	"github.com/gogf/gf/v2/errors/gcode"
 	"github.com/gogf/gf/v2/errors/gerror"
 	"github.com/gogf/gf/v2/os/gtime"
@@ -44,7 +45,7 @@ func (s *roleService) Get(ctx context.Context, req *v1.GetReq) (*v1.GetRes, erro
 
 	return &v1.GetRes{
 		Id:          role.ID,
-		PlatformId:  role.PlatformID,
+		AppId:       role.AppID,
 		Name:        role.Name,
 		Description: role.Description,
 		CreatedBy:   role.CreatedBy,
@@ -53,12 +54,12 @@ func (s *roleService) Get(ctx context.Context, req *v1.GetReq) (*v1.GetRes, erro
 }
 
 func (s *roleService) Create(ctx context.Context, req *v1.CreateReq) (*v1.CreateRes, error) {
-	if req.PlatformId <= 0 || req.Name == "" || req.Description == "" {
+	if req.AppId <= 0 || req.Name == "" || req.Description == "" {
 		return nil, gerror.NewCode(gcode.CodeInvalidParameter, "invalid input")
 	}
 
 	newRole := &entity.Role{
-		PlatformID:  req.PlatformId,
+		AppID:       req.AppId,
 		Name:        req.Name,
 		Description: req.Description,
 	}
@@ -70,7 +71,7 @@ func (s *roleService) Create(ctx context.Context, req *v1.CreateReq) (*v1.Create
 
 	return &v1.CreateRes{
 		Id:          created.ID,
-		PlatformId:  created.PlatformID,
+		AppId:       created.AppID,
 		Name:        created.Name,
 		Description: created.Description,
 		CreatedBy:   created.CreatedBy,
@@ -105,7 +106,7 @@ func (s *roleService) Update(ctx context.Context, req *v1.UpdateReq) (*v1.Update
 
 	return &v1.UpdateRes{
 		Id:          updated.ID,
-		PlatformId:  updated.PlatformID,
+		AppId:       updated.AppID,
 		Name:        updated.Name,
 		Description: updated.Description,
 		UpdatedBy:   updated.UpdatedBy,

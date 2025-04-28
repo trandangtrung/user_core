@@ -41,5 +41,6 @@ func (t *Template) Get(nameFile string, data map[string]interface{}) (string, er
 	return tmpl, err
 }
 
+// ExampleS
 // tmpl,err := template.Get("layout.html",map[string]string{toUpper: "toUpper"})
 // sender.SendEmail(subject, tmpl, to, nil, nil, attachFiles)

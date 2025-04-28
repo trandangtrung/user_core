@@ -22,22 +22,22 @@ func (d *Database) Seed() error {
 	}
 
 	// 2. Tạo Platform
-	platform := entity.Platform{
+	app := entity.App{
 		Name:      "network",
 		Config:    `{"theme":"dark","version":"1.0.0"}`,
-		CreatedBy: user.ID,
+		CreatedBy: &user.ID,
 		UpdatedBy: user.ID,
 	}
-	if err := db.Create(&platform).Error; err != nil {
+	if err := db.Create(&app).Error; err != nil {
 		return err
 	}
 
 	// 3. Tạo Role
 	role := entity.Role{
-		PlatformID:  platform.ID,
+		AppID:       app.ID,
 		Name:        "Admin",
 		Description: "Quyền quản trị",
-		CreatedBy:   user.ID,
+		CreatedBy:   &user.ID,
 		UpdatedBy:   user.ID,
 	}
 	if err := db.Create(&role).Error; err != nil {
@@ -45,26 +45,27 @@ func (d *Database) Seed() error {
 	}
 
 	// 4. Gán Role cho User
-	userRole := entity.UserRole{
-		UserID:    user.ID,
-		RoleID:    role.ID,
-		CreatedBy: user.ID,
-		UpdatedBy: user.ID,
-	}
-	if err := db.Create(&userRole).Error; err != nil {
-		return err
-	}
+	// userRole := entity.UserRole{
+	// 	UserID:    user.ID,
+	// 	RoleID:    role.ID,
+	// 	CreatedBy: user.ID,
+	// 	UpdatedBy: user.ID,
+	// }
 
-	// 5. Gán Platform cho User
-	userPlatform := entity.UserPlatform{
-		UserID:     user.ID,
-		PlatformID: uint(platform.ID),
-		CreatedBy:  user.ID,
-		UpdatedBy:  user.ID,
-	}
-	if err := db.Create(&userPlatform).Error; err != nil {
-		return err
-	}
+	// if err := db.Create(&userRole).Error; err != nil {
+	// 	return err
+	// }
+
+	// // 5. Gán Platform cho User
+	// userPlatform := entity.UserApp{
+	// 	UserID:    user.ID,
+	// 	AppID:     uint(app.ID),
+	// 	CreatedBy: user.ID,
+	// 	UpdatedBy: user.ID,
+	// }
+	// if err := db.Create(&userPlatform).Error; err != nil {
+	// 	return err
+	// }
 
 	// 6. Tạo Refresh Token
 	token := entity.Token{

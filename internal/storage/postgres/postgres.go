@@ -54,10 +54,10 @@ func (d *Database) Close() error {
 func autoMigrate(db *gorm.DB) error {
 	return db.AutoMigrate(
 		&entity.User{},
-		&entity.Platform{},
+		&entity.App{},
 		&entity.Role{},
-		&entity.UserRole{},
-		&entity.UserPlatform{},
+		// &entity.UserRole{},
+		// &entity.UserApp{},
 		&entity.Token{},
 	)
 }
