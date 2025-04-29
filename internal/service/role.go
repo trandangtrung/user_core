@@ -3,8 +3,10 @@ package service
 import (
 	"context"
 	v1 "demo/api/role/v1"
+	"demo/internal/consts"
 	"demo/internal/entity"
 	"demo/internal/repository"
+	"demo/utility/token"
 
 	"github.com/gogf/gf/v2/errors/gcode"
 	"github.com/gogf/gf/v2/errors/gerror"
@@ -79,9 +81,11 @@ func (s *roleService) Create(ctx context.Context, req *v1.CreateReq) (*v1.Create
 }
 
 func (s *roleService) Update(ctx context.Context, req *v1.UpdateReq) (*v1.UpdateRes, error) {
-	if req.Id <= 0 || req.UpdatedBy <= 0 {
-		return nil, gerror.NewCode(gcode.CodeInvalidParameter, "invalid ID or updatedBy")
-	}
+	payload, _ := ctx.Value(consts.AuthorizationKey).(*token.Payload)
+
+	var id int = payload.Id
+	convertedID := uint(id)
+	pointerID := &convertedID
 
 	existingRole, err := s.roleRepo.GetByID(ctx, req.Id)
 	if err != nil {
@@ -97,7 +101,8 @@ func (s *roleService) Update(ctx context.Context, req *v1.UpdateReq) (*v1.Update
 	if req.Description != "" {
 		existingRole.Description = req.Description
 	}
-	existingRole.UpdatedBy = &req.UpdatedBy
+
+	existingRole.UpdatedBy = pointerID
 
 	updated, err := s.roleRepo.Update(ctx, existingRole)
 	if err != nil {

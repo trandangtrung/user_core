@@ -6,7 +6,7 @@ import (
 
 type User struct {
 	Email string `json:"email"`
-	Role  string
+	Role  string `json:"role"`
 }
 
 type Token struct {
@@ -18,7 +18,7 @@ type LoginReq struct {
 	g.Meta   `path:"/login" method:"post" tags:"auth" summary:"Login user"`
 	Scope    string `in:"header" name:"Scope" default:"network" summary:"Scope"`
 	Email    string `json:"email" v:"required|email"`
-	Password string `json:"password" v:"password"`
+	Password string `json:"password" v:"required|password"`
 }
 
 type LoginRes struct {
@@ -29,16 +29,20 @@ type LoginRes struct {
 type SignupReq struct {
 	g.Meta   `path:"/signup" method:"post" tags:"auth" summary:"Sign up user"`
 	Email    string `json:"email" v:"required|email"`
-	Password string `json:"password" v:"password"`
+	Password string `json:"password" v:"required|password"`
 }
 
 type SignupRes struct {
-	Status string
+	Status string `json:"status"`
 }
 
 type RefreshTokenReq struct {
 	g.Meta `path:"/refresh-token" method:"get" tags:"auth" summary:"refresh token"`
 	Scope  string `in:"header" name:"Scope" default:"network" summary:"Scope"`
+}
+
+type RefreshTokenRes struct {
+	AccessToken string `json:"accessToken"`
 }
 
 type LoginByTokenReq struct {
@@ -49,8 +53,4 @@ type LoginByTokenReq struct {
 type LoginByTokenRes struct {
 	User  User  `json:"user"`
 	Token Token `json:"token"`
-}
-
-type RefreshTokenRes struct {
-	AccessToken string
 }

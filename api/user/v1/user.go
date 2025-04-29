@@ -6,8 +6,7 @@ import (
 
 type GetReq struct {
 	g.Meta `path:"/user/{id}" method:"get" tags:"user" summary:"Get user"`
-	Id     int64  `json:"id" v:"required"`
-	Scope  string `in:"header" name:"Scope" default:"network" summary:"Scope"`
+	Id     int64 `json:"id" v:"required"`
 }
 type GetRes struct {
 	Id    int64  `json:"id"`
@@ -19,28 +18,36 @@ type CreateReq struct {
 	UserName string `json:"userName" v:"required"`
 	Email    string `json:"email" v:"required|email"`
 	Password string `json:"password" v:"required|password"`
-	Role     int    `json:"role" v:"required"`
+	Role     int    `json:"role" v:"required|min:1"`
 	Apps     []int  `json:"apps" v:"required"`
 }
 
 type CreateRes struct {
-	Status string
+	Status string `json:"status"`
 }
 
 type UpdateReq struct {
-	g.Meta   `path:"/user/{id}" method:"put" tags:"user" summary:"Update user"`
-	Scope    string `in:"header" name:"Scope" default:"network" summary:"Scope"`
-	Id       int64  `v:"required"`
-	Email    string `v:"required"`
-	Password string `v:"required"`
+	g.Meta `path:"/user/{id}" method:"put" tags:"user" summary:"Update user"`
+	Id     int64  `json:"id" v:"required|min:1"`
+	Role   int    `json:"role" v:"required|min:1"`
+	Apps   []int  `json:"apps" v:"required"`
+	Email  string `json:"email" v:"required|email"`
+
+	// tùy theo bài toán có được phép đổi mật khẩu không
+	Password string `json:"password" v:"required|password"`
 }
 type UpdateRes struct {
+	Id    int64  `json:"id" v:"required|min:1"`
+	Email string `json:"email" v:"required|email"`
+	Role  int    `json:"role" v:"required|min:1"`
+	Apps  []int  `json:"apps" v:"required"`
 }
 
 type DeleteReq struct {
 	g.Meta `path:"/user/{id}" method:"delete" tags:"user" summary:"Delete user"`
-	Scope  string `in:"header" name:"Scope" default:"network" summary:"Scope"`
-	Id     int64  `v:"required"`
+	Id     int64 `json:"id" v:"required|min:1"`
 }
+
 type DeleteRes struct {
+	Status string `json:"status" v:"required"`
 }

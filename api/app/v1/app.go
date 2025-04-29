@@ -11,13 +11,13 @@ type app struct {
 type GetReq struct {
 	g.Meta `path:"/app/{id}" method:"get" tags:"app" summary:"Get app"`
 	Scope  string `in:"header" name:"Scope" default:"network" summary:"Scope"`
-	Id     int64  `json:"id" v:"required"`
+	Id     int64  `json:"id" v:"required|min:1"`
 }
 
 type GetRes struct {
 	Id       int64       `json:"id"`
-	Name     string      `json:"name" v:"required"`
-	Config   string      `json:"config" v:"required"`
+	Name     string      `json:"name"`
+	Config   string      `json:"config"`
 	CreateAt *gtime.Time `json:"created_at"`
 	CreateBy int64       `json:"created_by"`
 	UpdateAt *gtime.Time `json:"updated_at"`
@@ -27,7 +27,7 @@ type GetRes struct {
 type CreateReq struct {
 	g.Meta `path:"/app" method:"post" tags:"app" summary:"Create app"`
 	Scope  string `in:"header" name:"Scope" default:"network" summary:"Scope"`
-	Name   string `json:"name" v:"required"`
+	Name   string `json:"name" v:"required|length:1,20"`
 	Config string `json:"config" v:"required"`
 }
 
@@ -42,15 +42,15 @@ type CreateRes struct {
 type UpdateReq struct {
 	g.Meta `path:"/app/{id}" method:"patch" tags:"app" summary:"Update app"`
 	Scope  string `in:"header" name:"Scope" default:"network" summary:"Scope"`
-	Id     int64  `json:"id" v:"required"`
-	Name   string `json:"name" v:"required"`
+	Id     int64  `json:"id" v:"required|min:1"`
+	Name   string `json:"name" v:"required|length:1,20"`
 	Config string `json:"config" v:"required"`
 }
 
 type UpdateRes struct {
 	Id       int64       `json:"id"`
-	Name     string      `json:"name" v:"required"`
-	Config   string      `json:"config" v:"required"`
+	Name     string      `json:"name"`
+	Config   string      `json:"config"`
 	UpdateAt *gtime.Time `json:"updated_at"`
 	UpdateBy int64       `json:"updated_by"`
 }

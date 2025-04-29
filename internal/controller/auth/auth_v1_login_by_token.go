@@ -19,3 +19,4 @@ func (c *ControllerV1) LoginByToken(ctx context.Context, req *v1.LoginByTokenReq
 
 	return user, err
 }
+

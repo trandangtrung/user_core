@@ -10,14 +10,15 @@ type Role struct{}
 type GetReq struct {
 	g.Meta `path:"/role/{id}" method:"get" tags:"role" summary:"Get role"`
 	Scope  string `in:"header" name:"Scope" default:"network" summary:"Scope"`
-	Id     uint   `json:"id" v:"required"`
+	Id     uint   `json:"id" v:"required|min:1"`
 }
 
 type GetRes struct {
 	Id          uint        `json:"id"`
-	AppId       uint        `json:"app_id" v:"required"`
-	Name        string      `json:"name" v:"required"`
-	Description string      `json:"description" v:"required"`
+	AppId       uint        `json:"app_id"`
+	Name        string      `json:"name"`
+	Key         string      `json:"key"`
+	Description string      `json:"description"`
 	CreatedAt   *gtime.Time `json:"created_at"`
 	CreatedBy   *uint       `json:"created_by"`
 	UpdatedAt   *gtime.Time `json:"updated_at"`
@@ -27,14 +28,16 @@ type GetRes struct {
 type CreateReq struct {
 	g.Meta      `path:"/role" method:"post" tags:"role" summary:"Create role"`
 	Scope       string `in:"header" name:"Scope" default:"network" summary:"Scope"`
-	AppId       uint   `json:"app_id" v:"required"`
-	Name        string `json:"name" v:"required"`
-	Description string `json:"description" v:"required"`
+	Key         string `json:"key" v:"required"`
+	AppId       uint   `json:"app_id" v:"required|min:1"`
+	Name        string `json:"name" v:"required|length:1,20"`
+	Description string `json:"description" v:"required|length:1,300"`
 }
 
 type CreateRes struct {
 	Id          uint        `json:"id"`
 	AppId       uint        `json:"app_id"`
+	Key         string      `json:"key"`
 	Name        string      `json:"name"`
 	Description string      `json:"description"`
 	CreatedAt   *gtime.Time `json:"created_at"`
@@ -44,11 +47,11 @@ type CreateRes struct {
 type UpdateReq struct {
 	g.Meta      `path:"/role/{id}" method:"patch" tags:"role" summary:"Update role"`
 	Scope       string `in:"header" name:"Scope" default:"network" summary:"Scope"`
-	Id          uint   `json:"id" v:"required"`
-	AppId       uint   `json:"app_id" v:"required"`
-	Name        string `json:"name" v:"required"`
-	Description string `json:"description" v:"required"`
-	UpdatedBy   uint   `json:"updated_by" v:"required"`
+	Id          uint   `json:"id" v:"required|min:1"`
+	Name        string `json:"name" v:"required|length:1,20"`
+	Key         string `json:"key" v:"required"`
+	AppId       uint   `json:"app_id" v:"required|min:1"`
+	Description string `json:"description" v:"required|length:1,300"`
 }
 
 type UpdateRes struct {
@@ -63,7 +66,7 @@ type UpdateRes struct {
 type DeleteReq struct {
 	g.Meta `path:"/role/{id}" method:"delete" tags:"role" summary:"Delete role"`
 	Scope  string `in:"header" name:"Scope" default:"network" summary:"Scope"`
-	Id     uint   `json:"id" v:"required"`
+	Id     uint   `json:"id" v:"required|min:1"`
 }
 
 type DeleteRes struct {

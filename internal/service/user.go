@@ -9,7 +9,7 @@ import (
 
 type (
 	UserService interface {
-		Create(ctx context.Context, req *v1.CreateReq) (*v1.CreateRes, error)
+		CreateByAdmin(ctx context.Context, req *v1.CreateReq) (*v1.CreateRes, error)
 		GetByID(ctx context.Context, req *v1.GetReq) (res *v1.GetRes, err error)
 		Update(ctx context.Context, req *v1.UpdateReq) (res *v1.UpdateRes, err error)
 		Delete(ctx context.Context, req *v1.DeleteReq) (res *v1.DeleteRes, err error)
@@ -25,7 +25,9 @@ func NewUserService(userRepo repository.UserRepository) UserService {
 	}
 }
 
-func (u *userService) Create(ctx context.Context, req *v1.CreateReq) (*v1.CreateRes, error) {
+func (u *userService) CreateByAdmin(ctx context.Context, req *v1.CreateReq) (*v1.CreateRes, error) {
+	// check email
+
 	// create user
 
 	// assign user - role
