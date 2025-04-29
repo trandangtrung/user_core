@@ -24,22 +24,18 @@ type (
 		LoginByToken(ctx context.Context, req *v1.LoginByTokenReq) (res *v1.LoginByTokenRes, err error)
 	}
 	authService struct {
-		userRepo  repository.UserRepository
-		roleRepo  repository.RoleRepository
-		tokenRepo repository.TokenRepository
+		userRepo repository.UserRepository
 	}
 )
 
-func NewAuthService(userRepo repository.UserRepository, roleRepo repository.RoleRepository, tokenRepo repository.TokenRepository) AuthService {
+func NewAuthService(userRepo repository.UserRepository) AuthService {
 	return &authService{
-		userRepo:  userRepo,
-		roleRepo:  roleRepo,
-		tokenRepo: tokenRepo,
+		userRepo: userRepo,
 	}
 }
 
 func (a *authService) Login(ctx context.Context, req *v1.LoginReq) (res *v1.LoginRes, err error) {
-
+	// check if the email is already exist
 	user, err := a.checkEmail(ctx, req.Email)
 	if err != nil {
 		return nil, fmt.Errorf("email is not exist")
@@ -62,7 +58,7 @@ func (a *authService) Login(ctx context.Context, req *v1.LoginReq) (res *v1.Logi
 
 	scope := ctx.Value(consts.AuthorizationScope).(string)
 
-	roles, err := a.roleRepo.GetRolesByUserIDAndPlatformName(ctx, scope, uint(user.ID))
+	roles, err := a.userRepo.GetRolesByUserIDAndAppName(ctx, user.ID, scope)
 	if err != nil {
 		return nil, err
 	}
@@ -73,8 +69,8 @@ func (a *authService) Login(ctx context.Context, req *v1.LoginReq) (res *v1.Logi
 		return nil, gerror.NewCode(gcode.CodeNotFound, "role is not exist")
 	}
 
-	token, err := a.tokenRepo.Create(ctx, &entity.Token{
-		UserID:       uint(user.ID),
+	token, err := a.userRepo.CreateToken(ctx, &entity.Token{
+		UserID:       user.ID,
 		RefreshToken: refreshToken,
 		Scope:        scope,
 	})
@@ -98,7 +94,7 @@ func (a *authService) LoginByToken(ctx context.Context, req *v1.LoginByTokenReq)
 
 	payload, _ := ctx.Value(consts.AuthorizationKey).(*token.Payload)
 
-	user, err := a.userRepo.GetByID(ctx, uint(payload.Id))
+	user, err := a.userRepo.GetUserByID(ctx, uint(payload.Id))
 
 	if err != nil {
 		return nil, gerror.NewCode(gcode.CodeNotFound, "user is not exist")
@@ -116,7 +112,7 @@ func (a *authService) LoginByToken(ctx context.Context, req *v1.LoginByTokenReq)
 
 	scope := ctx.Value(consts.AuthorizationScope).(string)
 
-	roles, err := a.roleRepo.GetRolesByUserIDAndPlatformName(ctx, scope, uint(payload.Id))
+	roles, err := a.userRepo.GetRolesByUserIDAndAppName(ctx, user.ID, scope)
 	if err != nil {
 		return nil, err
 	}
@@ -127,7 +123,7 @@ func (a *authService) LoginByToken(ctx context.Context, req *v1.LoginByTokenReq)
 		return nil, gerror.NewCode(gcode.CodeNotFound, "role is not exist")
 	}
 
-	token, err := a.tokenRepo.Create(ctx, &entity.Token{
+	token, err := a.userRepo.CreateToken(ctx, &entity.Token{
 		UserID:       uint(payload.Id),
 		RefreshToken: refreshToken,
 		Scope:        scope,
@@ -149,7 +145,7 @@ func (a *authService) LoginByToken(ctx context.Context, req *v1.LoginByTokenReq)
 }
 
 func (a *authService) Signup(ctx context.Context, req *v1.SignupReq) (res *v1.SignupRes, err error) {
-
+	//	// check if the email is already exist
 	_, err = a.checkEmail(ctx, req.Email)
 	if err == nil {
 		return nil, err
@@ -160,7 +156,7 @@ func (a *authService) Signup(ctx context.Context, req *v1.SignupReq) (res *v1.Si
 		return nil, err
 	}
 
-	_, err = a.userRepo.Create(ctx, &entity.User{
+	_, err = a.userRepo.CreateUser(ctx, &entity.User{
 		Email:          req.Email,
 		PasswordHashed: hashedPassword,
 	})
@@ -174,6 +170,7 @@ func (a *authService) Signup(ctx context.Context, req *v1.SignupReq) (res *v1.Si
 }
 
 func (a *authService) RefreshToken(ctx context.Context, req *v1.RefreshTokenReq) (res *v1.RefreshTokenRes, err error) {
+	// check if the refresh token is valid
 	payload, _ := ctx.Value(consts.AuthorizationKey).(*token.Payload)
 
 	accessToken, _, err := global.Token.CreateToken(int(payload.Id), payload.Permissions, config.GetConfig().JwtCfg.TimeAccess)
@@ -187,8 +184,7 @@ func (a *authService) RefreshToken(ctx context.Context, req *v1.RefreshTokenReq)
 }
 
 func (a *authService) checkEmail(ctx context.Context, email string) (*entity.User, error) {
-
-	user, err := a.userRepo.GetByEmail(ctx, email)
+	user, err := a.userRepo.GetUserByEmail(ctx, email)
 	if err != nil {
 		return nil, gerror.NewCode(gcode.CodeNotFound, "email is not exist")
 	}

@@ -22,17 +22,12 @@ func Router(r *ghttp.RouterGroup) {
 	db := postgres.GetDatabaseConnection().Connection
 
 	// init repository
-	appRepo := repository.NewAppRepository(db)
-	roleRepo := repository.NewRoleRepository(db)
-	tokenRepo := repository.NewTokenRepository(db)
-	// userAppRepo := repository.NewUserAppRepository(db)
-	// userRoleRepo := repository.NewUserRoleRepository(db)
 	userRepo := repository.NewUserRepository(db)
 
 	// init logic
-	authService := service.NewAuthService(userRepo, roleRepo, tokenRepo)
-	appService := service.NewAppService(appRepo)
-	roleService := service.NewRoleService(roleRepo)
+	authService := service.NewAuthService(userRepo)
+	appService := service.NewAppService(userRepo)
+	roleService := service.NewRoleService(userRepo)
 	userService := service.NewUserService(userRepo)
 
 	// init controller
@@ -48,7 +43,6 @@ func Router(r *ghttp.RouterGroup) {
 
 	// register router
 	adminRouter.Register(r)
-	buyerRouter.Register(r, middleware, authController, userController, roleController,
-		appController)
+	buyerRouter.Register(r, middleware, authController, userController, roleController, appController)
 	sellerRouter.Register(r, middleware)
 }
