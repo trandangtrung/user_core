@@ -16,26 +16,22 @@ type (
 		Get(ctx context.Context, req *v1.GetReq) (*v1.GetRes, error)
 		Create(ctx context.Context, req *v1.CreateReq) (*v1.CreateRes, error)
 		Update(ctx context.Context, req *v1.UpdateReq) (*v1.UpdateRes, error)
-		Delete(ctx context.Context, id int64) error
+		Delete(ctx context.Context, id uint) error
 	}
-
 	appService struct {
-		appRepo repository.AppRepository
+		userRepo repository.UserRepository
 	}
 )
 
-func NewAppService(appRepo repository.AppRepository) AppService {
+func NewAppService(userRepo repository.UserRepository) AppService {
 	return &appService{
-		appRepo: appRepo,
+		userRepo: userRepo,
 	}
 }
 
 func (s *appService) Get(ctx context.Context, req *v1.GetReq) (*v1.GetRes, error) {
-	if req.Id <= 0 {
-		return nil, gerror.NewCode(gcode.CodeInvalidParameter, "invalid ID")
-	}
 
-	app, err := s.appRepo.GetByID(ctx, req.Id)
+	app, err := s.userRepo.GetAppByID(ctx, req.Id)
 	if err != nil {
 		return nil, gerror.WrapCode(gcode.CodeInternalError, err, "failed to get platform")
 	}
@@ -44,72 +40,52 @@ func (s *appService) Get(ctx context.Context, req *v1.GetReq) (*v1.GetRes, error
 	}
 
 	return &v1.GetRes{
-		Id:   int64(app.ID),
+		Id:   app.ID,
 		Name: app.Name,
 	}, nil
 }
 
 func (s *appService) Create(ctx context.Context, req *v1.CreateReq) (*v1.CreateRes, error) {
-	if req.Name == "" {
-		return nil, gerror.NewCode(gcode.CodeInvalidParameter, "name must not be empty")
-	}
 
 	newApp := &entity.App{
 		Name:   req.Name,
 		Config: req.Config,
 	}
 
-	created, err := s.appRepo.Create(ctx, newApp)
+	created, err := s.userRepo.CreateApp(ctx, newApp)
 	if err != nil {
 		return nil, gerror.WrapCode(gcode.CodeInternalError, err, "failed to create platform")
 	}
 
 	return &v1.CreateRes{
-		Id:     int64(created.ID),
+		Id:     created.ID,
 		Name:   created.Name,
 		Config: created.Config,
 	}, nil
 }
 
 func (s *appService) Update(ctx context.Context, req *v1.UpdateReq) (*v1.UpdateRes, error) {
-	if req.Id <= 0 {
-		return nil, gerror.NewCode(gcode.CodeInvalidParameter, "invalid ID")
-	}
-	if req.Name == "" && req.Config == "" {
-		return nil, gerror.NewCode(gcode.CodeInvalidParameter, "name and config must not be empty")
-	}
-
-	existingApp, err := s.appRepo.GetByID(ctx, req.Id)
+	// check if the app exists
+	existingApp, err := s.userRepo.GetAppByID(ctx, req.Id)
 	if err != nil {
 		return nil, gerror.WrapCode(gcode.CodeInternalError, err, "failed to get app")
 	}
 
-	if req.Name != "" {
-		existingApp.Name = req.Name
-	}
-	if req.Config != "" {
-		existingApp.Config = req.Config
-	}
-
-	updatePlatform, err := s.appRepo.Update(ctx, existingApp)
+	updatePlatform, err := s.userRepo.UpdateApp(ctx, existingApp)
 	if err != nil {
 		return nil, gerror.WrapCode(gcode.CodeInternalError, err, "failed to update app")
 	}
 
 	return &v1.UpdateRes{
-		Id:       int64(updatePlatform.ID),
+		Id:       updatePlatform.ID,
 		Name:     updatePlatform.Name,
 		Config:   updatePlatform.Config,
 		UpdateAt: gtime.NewFromTime(updatePlatform.UpdatedAt),
 	}, nil
 }
 
-func (s *appService) Delete(ctx context.Context, id int64) error {
-	if id <= 0 {
-		return gerror.NewCode(gcode.CodeInvalidParameter, "invalid ID")
-	}
-
-	err := s.appRepo.Delete(ctx, id)
+func (s *appService) Delete(ctx context.Context, id uint) error {
+	err := s.userRepo.DeleteApp(ctx, id)
 	if err != nil {
 		return gerror.WrapCode(gcode.CodeInternalError, err, "failed to delete platform")
 	}

@@ -22,6 +22,14 @@ func main() {
 	}
 	initialize.InitToken()
 
+	// This is a placeholder for the actual seeding logic.
+	// You can replace this with your actual seeding function.
+	err := postgres.GetDatabaseConnection().Seed()
+	if err != nil {
+		fmt.Println("Error seeding database:", err)
+		return
+	}
+
 	cmd.Main.Run(gctx.GetInitCtx())
 	defer postgres.GetDatabaseConnection().Close()
 }

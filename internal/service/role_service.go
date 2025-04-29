@@ -15,29 +15,25 @@ import (
 
 type (
 	RoleService interface {
-		Get(ctx context.Context, req *v1.GetReq) (*v1.GetRes, error)
+		GetByID(ctx context.Context, req *v1.GetReq) (*v1.GetRes, error)
 		Create(ctx context.Context, req *v1.CreateReq) (*v1.CreateRes, error)
 		Update(ctx context.Context, req *v1.UpdateReq) (*v1.UpdateRes, error)
 		Delete(ctx context.Context, id uint) error
 	}
-
 	roleService struct {
-		roleRepo repository.RoleRepository
+		userRepo repository.UserRepository
 	}
 )
 
-func NewRoleService(roleRepo repository.RoleRepository) RoleService {
+func NewRoleService(userRepo repository.UserRepository) RoleService {
 	return &roleService{
-		roleRepo: roleRepo,
+		userRepo: userRepo,
 	}
 }
 
-func (s *roleService) Get(ctx context.Context, req *v1.GetReq) (*v1.GetRes, error) {
-	if req.Id <= 0 {
-		return nil, gerror.NewCode(gcode.CodeInvalidParameter, "invalid ID")
-	}
+func (s *roleService) GetByID(ctx context.Context, req *v1.GetReq) (*v1.GetRes, error) {
 
-	role, err := s.roleRepo.GetByID(ctx, uint(req.Id))
+	role, err := s.userRepo.GetRoleByID(ctx, uint(req.Id))
 	if err != nil {
 		return nil, gerror.WrapCode(gcode.CodeInternalError, err, "failed to get role")
 	}
@@ -66,7 +62,7 @@ func (s *roleService) Create(ctx context.Context, req *v1.CreateReq) (*v1.Create
 		Description: req.Description,
 	}
 
-	created, err := s.roleRepo.Create(ctx, newRole)
+	created, err := s.userRepo.CreateRole(ctx, newRole)
 	if err != nil {
 		return nil, gerror.WrapCode(gcode.CodeInternalError, err, "failed to create role")
 	}
@@ -87,7 +83,7 @@ func (s *roleService) Update(ctx context.Context, req *v1.UpdateReq) (*v1.Update
 	convertedID := uint(id)
 	pointerID := &convertedID
 
-	existingRole, err := s.roleRepo.GetByID(ctx, req.Id)
+	existingRole, err := s.userRepo.GetRoleByID(ctx, req.Id)
 	if err != nil {
 		return nil, gerror.WrapCode(gcode.CodeInternalError, err, "failed to get role")
 	}
@@ -104,7 +100,7 @@ func (s *roleService) Update(ctx context.Context, req *v1.UpdateReq) (*v1.Update
 
 	existingRole.UpdatedBy = pointerID
 
-	updated, err := s.roleRepo.Update(ctx, existingRole)
+	updated, err := s.userRepo.UpdateRole(ctx, existingRole)
 	if err != nil {
 		return nil, gerror.WrapCode(gcode.CodeInternalError, err, "failed to update role")
 	}
@@ -124,7 +120,7 @@ func (s *roleService) Delete(ctx context.Context, id uint) error {
 		return gerror.NewCode(gcode.CodeInvalidParameter, "invalid ID")
 	}
 
-	err := s.roleRepo.Delete(ctx, id)
+	err := s.userRepo.DeleteRole(ctx, id)
 	if err != nil {
 		return gerror.WrapCode(gcode.CodeInternalError, err, "failed to delete role")
 	}

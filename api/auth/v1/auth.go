@@ -18,7 +18,7 @@ type LoginReq struct {
 	g.Meta   `path:"/login" method:"post" tags:"auth" summary:"Login user"`
 	Scope    string `in:"header" name:"Scope" default:"network" summary:"Scope"`
 	Email    string `json:"email" v:"required|email"`
-	Password string `json:"password" v:"required|password"`
+	Password string `json:"password" v:"required"`
 }
 
 type LoginRes struct {
@@ -29,7 +29,7 @@ type LoginRes struct {
 type SignupReq struct {
 	g.Meta   `path:"/signup" method:"post" tags:"auth" summary:"Sign up user"`
 	Email    string `json:"email" v:"required|email"`
-	Password string `json:"password" v:"required|password"`
+	Password string `json:"password" v:"required"`
 }
 
 type SignupRes struct {
