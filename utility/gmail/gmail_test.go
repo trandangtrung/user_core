@@ -1,8 +1,8 @@
 package mail
 
 import (
-	"demo/utility/template"
 	"log"
+	"strongbody-api/utility/template"
 	"testing"
 
 	"github.com/gogf/gf/v2/frame/g"

@@ -5,8 +5,8 @@
 package auth
 
 import (
-	"demo/api/auth"
-	"demo/internal/service"
+	"strongbody-api/api/auth"
+	"strongbody-api/internal/service"
 )
 
 type ControllerV1 struct {

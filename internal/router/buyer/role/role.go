@@ -1,8 +1,8 @@
 package roleBuyerRouter
 
 import (
-	"demo/api/role"
-	"demo/internal/middleware"
+	"strongbody-api/api/role"
+	"strongbody-api/internal/middleware"
 
 	"github.com/gogf/gf/v2/net/ghttp"
 )

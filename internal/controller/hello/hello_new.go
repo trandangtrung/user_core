@@ -5,7 +5,7 @@
 package hello
 
 import (
-	"demo/api/hello"
+	"strongbody-api/api/hello"
 )
 
 type ControllerV1 struct{}

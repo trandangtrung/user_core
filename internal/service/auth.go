@@ -2,15 +2,15 @@ package service
 
 import (
 	"context"
-	v1 "demo/api/auth/v1"
-	"demo/global"
-	"demo/internal/config"
-	"demo/internal/consts"
-	"demo/internal/entity"
-	"demo/internal/repository"
-	utils "demo/utility"
-	"demo/utility/token"
 	"fmt"
+	v1 "strongbody-api/api/auth/v1"
+	"strongbody-api/global"
+	"strongbody-api/internal/config"
+	"strongbody-api/internal/consts"
+	"strongbody-api/internal/entity"
+	"strongbody-api/internal/repository"
+	utils "strongbody-api/utility"
+	"strongbody-api/utility/token"
 
 	"github.com/gogf/gf/v2/errors/gcode"
 	"github.com/gogf/gf/v2/errors/gerror"

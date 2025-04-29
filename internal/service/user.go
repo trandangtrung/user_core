@@ -2,9 +2,12 @@ package service
 
 import (
 	"context"
-	v1 "demo/api/user/v1"
-	"demo/internal/repository"
-	utils "demo/utility"
+	"errors"
+	"fmt"
+	v1 "strongbody-api/api/user/v1"
+	"strongbody-api/internal/entity"
+	"strongbody-api/internal/repository"
+	utils "strongbody-api/utility"
 )
 
 type (
@@ -26,15 +29,57 @@ func NewUserService(userRepo repository.UserRepository) UserService {
 }
 
 func (u *userService) CreateByAdmin(ctx context.Context, req *v1.CreateReq) (*v1.CreateRes, error) {
-	// check email
+	//Start transaction
+	tx := u.userRepo.BeginTx(ctx)
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback()
+		}
+	}()
 
-	// create user
+	//Check if email already exists
+	existingUser, err := u.userRepo.GetByEmail(ctx, req.Email)
+	if err != nil {
+		tx.Rollback()
+		return nil, err
+	}
+	if existingUser != nil {
+		tx.Rollback()
+		return nil, errors.New("email already exists")
+	}
+	//Hash password
+	passwordHashed, err := utils.HashPassword(req.Password)
+	if err != nil {
+		tx.Rollback()
+		return nil, err
+	}
 
-	// assign user - role
+	//Create user
+	newUser := &entity.User{
+		Email:          req.Email,
+		PasswordHashed: passwordHashed,
+	}
+	createdUser, err := u.userRepo.Create(ctx, newUser)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create user: %w", err)
+	}
 
-	// assign user - app
-	
-	return &v1.CreateRes{}
+	// Gán role và apps trong cùng transaction
+	if err := u.userRepo.AssignRole(ctx, tx, newUser.ID, req.Role); err != nil {
+		tx.Rollback()
+		return nil, err
+	}
+
+	if err := u.userRepo.AssignApps(ctx, tx, newUser.ID, req.Apps); err != nil {
+		tx.Rollback()
+		return nil, err
+	}
+
+	return &v1.CreateRes{
+		Status:  "ok",
+		ID:      int64(createdUser.ID),
+		Message: "User created successfully",
+	}, nil
 }
 
 func (u *userService) GetByID(ctx context.Context, req *v1.GetReq) (res *v1.GetRes, err error) {

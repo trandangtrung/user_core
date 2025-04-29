@@ -7,7 +7,7 @@ package role
 import (
 	"context"
 
-	"demo/api/role/v1"
+	"strongbody-api/api/role/v1"
 )
 
 type IRoleV1 interface {

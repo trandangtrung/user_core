@@ -1,17 +1,17 @@
 package router
 
 import (
-	"demo/internal/controller/app"
-	"demo/internal/controller/auth"
-	"demo/internal/controller/role"
-	"demo/internal/controller/user"
-	"demo/internal/middleware"
-	"demo/internal/repository"
-	adminRouter "demo/internal/router/admin"
-	buyerRouter "demo/internal/router/buyer"
-	sellerRouter "demo/internal/router/seller"
-	"demo/internal/service"
-	"demo/internal/storage/postgres"
+	"strongbody-api/internal/controller/app"
+	"strongbody-api/internal/controller/auth"
+	"strongbody-api/internal/controller/role"
+	"strongbody-api/internal/controller/user"
+	"strongbody-api/internal/middleware"
+	"strongbody-api/internal/repository"
+	adminRouter "strongbody-api/internal/router/admin"
+	buyerRouter "strongbody-api/internal/router/buyer"
+	sellerRouter "strongbody-api/internal/router/seller"
+	"strongbody-api/internal/service"
+	"strongbody-api/internal/storage/postgres"
 
 	"github.com/gogf/gf/v2/net/ghttp"
 )

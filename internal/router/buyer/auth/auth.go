@@ -1,8 +1,8 @@
 package authBuyerRouter
 
 import (
-	"demo/api/auth"
-	"demo/internal/middleware"
+	"strongbody-api/api/auth"
+	"strongbody-api/internal/middleware"
 
 	"github.com/gogf/gf/v2/net/ghttp"
 )

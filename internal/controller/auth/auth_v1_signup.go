@@ -3,8 +3,8 @@ package auth
 import (
 	"context"
 
-	v1 "demo/api/auth/v1"
-	"demo/global"
+	v1 "strongbody-api/api/auth/v1"
+	"strongbody-api/global"
 )
 
 func (c *ControllerV1) Signup(ctx context.Context, req *v1.SignupReq) (res *v1.SignupRes, err error) {

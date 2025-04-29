@@ -23,7 +23,9 @@ type CreateReq struct {
 }
 
 type CreateRes struct {
-	Status string `json:"status"`
+	Status  string `json:"status"`
+	ID      int64  `json:"id"`
+	Message string `json:"message"`
 }
 
 type UpdateReq struct {

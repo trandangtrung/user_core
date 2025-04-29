@@ -5,8 +5,8 @@
 package app
 
 import (
-	"demo/api/app"
-	"demo/internal/service"
+	"strongbody-api/api/app"
+	"strongbody-api/internal/service"
 )
 
 type ControllerV1 struct {

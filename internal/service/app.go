@@ -2,9 +2,9 @@ package service
 
 import (
 	"context"
-	v1 "demo/api/app/v1"
-	"demo/internal/entity"
-	"demo/internal/repository"
+	v1 "strongbody-api/api/app/v1"
+	"strongbody-api/internal/entity"
+	"strongbody-api/internal/repository"
 
 	"github.com/gogf/gf/v2/errors/gcode"
 	"github.com/gogf/gf/v2/errors/gerror"

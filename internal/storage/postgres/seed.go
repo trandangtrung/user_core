@@ -1,8 +1,8 @@
 package postgres
 
 import (
-	"demo/internal/entity"
-	utils "demo/utility"
+	"strongbody-api/internal/entity"
+	utils "strongbody-api/utility"
 )
 
 func (d *Database) Seed() error {

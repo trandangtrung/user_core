@@ -7,7 +7,7 @@ package hello
 import (
 	"context"
 
-	"demo/api/hello/v1"
+	"strongbody-api/api/hello/v1"
 )
 
 type IHelloV1 interface {

@@ -5,8 +5,8 @@
 package role
 
 import (
-	"demo/api/role"
-	"demo/internal/service"
+	"strongbody-api/api/role"
+	"strongbody-api/internal/service"
 )
 
 type ControllerV1 struct {

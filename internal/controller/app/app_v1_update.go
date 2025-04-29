@@ -3,8 +3,8 @@ package app
 import (
 	"context"
 
-	v1 "demo/api/app/v1"
-	"demo/global"
+	v1 "strongbody-api/api/app/v1"
+	"strongbody-api/global"
 )
 
 func (c *ControllerV1) Update(ctx context.Context, req *v1.UpdateReq) (res *v1.UpdateRes, err error) {

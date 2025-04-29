@@ -1,9 +1,9 @@
 package postgres
 
 import (
-	"demo/internal/config"
-	"demo/internal/entity"
 	"log"
+	"strongbody-api/internal/config"
+	"strongbody-api/internal/entity"
 	"sync"
 
 	"gorm.io/driver/postgres"

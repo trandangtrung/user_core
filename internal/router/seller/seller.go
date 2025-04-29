@@ -1,7 +1,7 @@
 package sellerRouter
 
 import (
-	"demo/internal/middleware"
+	"strongbody-api/internal/middleware"
 
 	"github.com/gogf/gf/v2/net/ghttp"
 )

@@ -2,7 +2,7 @@ package repository
 
 import (
 	"context"
-	"demo/internal/entity"
+	"strongbody-api/internal/entity"
 
 	"gorm.io/gorm"
 )

@@ -1,15 +1,15 @@
 package buyerRouter
 
 import (
-	"demo/api/app"
-	"demo/api/auth"
-	"demo/api/role"
-	"demo/api/user"
-	"demo/internal/middleware"
-	appBuyerRouter "demo/internal/router/buyer/app"
-	authBuyerRouter "demo/internal/router/buyer/auth"
-	roleBuyerRouter "demo/internal/router/buyer/role"
-	userBuyerRouter "demo/internal/router/buyer/user"
+	"strongbody-api/api/app"
+	"strongbody-api/api/auth"
+	"strongbody-api/api/role"
+	"strongbody-api/api/user"
+	"strongbody-api/internal/middleware"
+	appBuyerRouter "strongbody-api/internal/router/buyer/app"
+	authBuyerRouter "strongbody-api/internal/router/buyer/auth"
+	roleBuyerRouter "strongbody-api/internal/router/buyer/role"
+	userBuyerRouter "strongbody-api/internal/router/buyer/user"
 
 	"github.com/gogf/gf/v2/net/ghttp"
 )

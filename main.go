@@ -1,15 +1,15 @@
 package main
 
 import (
-	"demo/internal/initialize"
-	_ "demo/internal/packed"
-	"demo/internal/storage/postgres"
 	"fmt"
 	"os"
+	"strongbody-api/internal/initialize"
+	_ "strongbody-api/internal/packed"
+	"strongbody-api/internal/storage/postgres"
 
 	"github.com/gogf/gf/v2/os/gctx"
 
-	"demo/internal/cmd"
+	"strongbody-api/internal/cmd"
 )
 
 func main() {

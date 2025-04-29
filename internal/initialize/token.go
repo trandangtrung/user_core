@@ -2,9 +2,9 @@ package initialize
 
 import (
 	"context"
-	"demo/global"
-	"demo/internal/config"
-	"demo/utility/token"
+	"strongbody-api/global"
+	"strongbody-api/internal/config"
+	"strongbody-api/utility/token"
 )
 
 func InitToken() {

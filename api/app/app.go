@@ -7,7 +7,7 @@ package app
 import (
 	"context"
 
-	"demo/api/app/v1"
+	"strongbody-api/api/app/v1"
 )
 
 type IAppV1 interface {

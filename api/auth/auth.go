@@ -7,7 +7,7 @@ package auth
 import (
 	"context"
 
-	"demo/api/auth/v1"
+	"strongbody-api/api/auth/v1"
 )
 
 type IAuthV1 interface {

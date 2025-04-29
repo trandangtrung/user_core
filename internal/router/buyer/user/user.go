@@ -1,8 +1,8 @@
 package userBuyerRouter
 
 import (
-	"demo/api/user"
-	"demo/internal/middleware"
+	"strongbody-api/api/user"
+	"strongbody-api/internal/middleware"
 
 	"github.com/gogf/gf/v2/net/ghttp"
 )
