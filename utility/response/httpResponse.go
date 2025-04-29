@@ -1,0 +1,204 @@
+package response
+
+// HTTP
+const (
+	SUCCESS        = 200
+	ACTION_SUCCESS = 201
+	BAD_REQUEST    = 400
+	UNAUTHORIZED   = 401
+	FORBIDDEN      = 403
+	NOT_FOUND      = 404
+	ALREADY_EXIST  = 409
+	INTERNAL_ERROR = 500
+)
+
+// AUTH
+const (
+	TOKEN_EXPIRED                = 40100
+	TOKEN_INVALID                = 40101
+	TOKEN_MISSING                = 40102
+	INVALID_REFRESH_TOKEN        = 40103
+	REFRESH_TOKEN_EXPIRED        = 40104
+	PASSWORD_RESET_TOKEN_EXPIRED = 40105
+	LOGIN_REQUIRED               = 40106
+
+	ACCOUNT_NOT_VERIFIED = 40300
+	ACCOUNT_LOCKED       = 40301
+	ACCOUNT_DISABLED     = 40302 // account disabled by admin
+	PERMISSION_DENIED    = 40303
+
+	EMAIL_ALREADY_VERIFIED  = 40900
+	MOBILE_ALREADY_VERIFIED = 40901
+)
+
+// USER
+const (
+	USER_NOT_FOUND          = 40410
+	USERNAME_REQUIRED       = 40010
+	USERNAME_INVALID        = 40011
+	USERNAME_ALREADY_EXISTS = 40911
+
+	EMAIL_REQUIRED       = 40012
+	EMAIL_INVALID        = 40013
+	EMAIL_ALREADY_EXISTS = 40912
+
+	PASSWORD_REQUIRED  = 40014
+	PASSWORD_TOO_SHORT = 40015
+	PASSWORD_MISMATCH  = 40016
+)
+
+// PRODUCT
+const (
+	PRODUCT_NOT_FOUND      = 40420
+	PRODUCT_NAME_REQUIRED  = 40020
+	PRODUCT_PRICE_INVALID  = 40021
+	PRODUCT_ALREADY_EXISTS = 40920
+)
+
+type TypeResponse struct {
+	Type   string
+	Status int
+}
+
+var httpResponse = map[int]TypeResponse{
+	SUCCESS: {
+		Type:   "SUCCESS",
+		Status: 200,
+	},
+	ACTION_SUCCESS: {
+		Type:   "CREATE_SUCCESS",
+		Status: 201,
+	},
+	BAD_REQUEST: {
+		Type:   "BAD_REQUEST",
+		Status: 400,
+	},
+	UNAUTHORIZED: {
+		Type:   "UNAUTHORIZED",
+		Status: 401,
+	},
+	FORBIDDEN: {
+		Type:   "FORBIDDEN",
+		Status: 403,
+	},
+	NOT_FOUND: {
+		Type:   "NOT_FOUND",
+		Status: 404,
+	},
+	ALREADY_EXIST: {
+		Type:   "ALREADY_EXIST",
+		Status: 409,
+	},
+	INTERNAL_ERROR: {
+		Type:   "INTERNAL_SERVER_ERROR",
+		Status: 500,
+	},
+	TOKEN_EXPIRED: {
+		Type:   "TOKEN_EXPIRED",
+		Status: 401,
+	},
+	TOKEN_INVALID: {
+		Type:   "TOKEN_INVALID",
+		Status: 401,
+	},
+	TOKEN_MISSING: {
+		Type:   "TOKEN_MISSING",
+		Status: 401,
+	},
+	INVALID_REFRESH_TOKEN: {
+		Type:   "INVALID_REFRESH_TOKEN",
+		Status: 401,
+	},
+	REFRESH_TOKEN_EXPIRED: {
+		Type:   "REFRESH_TOKEN_EXPIRED",
+		Status: 401,
+	},
+	PASSWORD_RESET_TOKEN_EXPIRED: {
+		Type:   "PASSWORD_RESET_TOKEN_EXPIRED",
+		Status: 401,
+	},
+	LOGIN_REQUIRED: {
+		Type:   "LOGIN_REQUIRED",
+		Status: 401,
+	},
+	ACCOUNT_NOT_VERIFIED: {
+		Type:   "ACCOUNT_NOT_VERIFIED",
+		Status: 403,
+	},
+	ACCOUNT_LOCKED: {
+		Type:   "ACCOUNT_LOCKED",
+		Status: 403,
+	},
+	ACCOUNT_DISABLED: {
+		Type:   "ACCOUNT_DISABLED",
+		Status: 403,
+	},
+	PERMISSION_DENIED: {
+		Type:   "PERMISSION_DENIED",
+		Status: 403,
+	},
+	EMAIL_ALREADY_VERIFIED: {
+		Type:   "EMAIL_ALREADY_VERIFIED",
+		Status: 409,
+	},
+	MOBILE_ALREADY_VERIFIED: {
+		Type:   "MOBILE_ALREADY_VERIFIED",
+		Status: 409,
+	},
+	USER_NOT_FOUND: {
+		Type:   "USER_NOT_FOUND",
+		Status: 404,
+	},
+	USERNAME_REQUIRED: {
+		Type:   "USERNAME_REQUIRED",
+		Status: 400,
+	},
+	USERNAME_INVALID: {
+		Type:   "USERNAME_INVALID",
+		Status: 400,
+	},
+	USERNAME_ALREADY_EXISTS: {
+		Type:   "USERNAME_ALREADY_EXISTS",
+		Status: 409,
+	},
+	EMAIL_REQUIRED: {
+		Type:   "EMAIL_REQUIRED",
+		Status: 400,
+	},
+	EMAIL_INVALID: {
+		Type:   "EMAIL_INVALID",
+		Status: 400,
+	},
+	EMAIL_ALREADY_EXISTS: {
+		Type:   "EMAIL_ALREADY_EXISTS",
+		Status: 409,
+	},
+	PASSWORD_REQUIRED: {
+		Type:   "PASSWORD_REQUIRED",
+		Status: 400,
+	},
+	PASSWORD_TOO_SHORT: {
+		Type:   "PASSWORD_TOO_SHORT",
+		Status: 400,
+	},
+	PASSWORD_MISMATCH: {
+		Type:   "PASSWORD_MISMATCH",
+		Status: 400,
+	},
+	PRODUCT_NOT_FOUND: {
+		Type:   "PRODUCT_NOT_FOUND",
+		Status: 404,
+	},
+	PRODUCT_NAME_REQUIRED: {
+		Type:   "PRODUCT_NAME_REQUIRED",
+		Status: 400,
+	},
+	PRODUCT_PRICE_INVALID: {
+		Type:   "PRODUCT_PRICE_INVALID",
+		Status: 400,
+	},
+	PRODUCT_ALREADY_EXISTS: {
+		Type:   "PRODUCT_ALREADY_EXISTS",
+		Status: 409,
+	},
+}

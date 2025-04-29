@@ -33,8 +33,8 @@ func (u *userService) CreateByAdmin(ctx context.Context, req *v1.CreateReq) (*v1
 	// assign user - role
 
 	// assign user - app
-	
-	return &v1.CreateRes{}
+
+	return nil, nil
 }
 
 func (u *userService) GetByID(ctx context.Context, req *v1.GetReq) (res *v1.GetRes, err error) {
