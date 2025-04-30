@@ -1,4 +1,4 @@
-module demo
+module github.com/quannv/strongbody-api
 
 go 1.22
 

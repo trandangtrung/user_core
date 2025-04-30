@@ -11,8 +11,8 @@ import (
 	"github.com/gogf/gf/v2/os/gcmd"
 	"github.com/gogf/gf/v2/os/gfile"
 
-	"demo/internal/config"
-	"demo/internal/router"
+	"github.com/quannv/strongbody-api/internal/config"
+	"github.com/quannv/strongbody-api/internal/router"
 )
 
 var (

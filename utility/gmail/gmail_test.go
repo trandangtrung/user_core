@@ -1,9 +1,10 @@
 package mail
 
 import (
-	"demo/utility/template"
 	"log"
 	"testing"
+
+	"github.com/quannv/strongbody-api/utility/template"
 
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/stretchr/testify/require"

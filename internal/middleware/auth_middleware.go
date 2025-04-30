@@ -2,9 +2,10 @@ package middleware
 
 import (
 	"context"
-	"demo/global"
-	"demo/internal/consts"
 	"strings"
+
+	"github.com/quannv/strongbody-api/global"
+	"github.com/quannv/strongbody-api/internal/consts"
 
 	"github.com/gogf/gf/frame/g"
 	"github.com/gogf/gf/v2/net/ghttp"

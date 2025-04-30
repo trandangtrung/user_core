@@ -1,8 +1,8 @@
 package appBuyerRouter
 
 import (
-	"demo/api/app"
-	"demo/internal/middleware"
+	"github.com/quannv/strongbody-api/api/app"
+	"github.com/quannv/strongbody-api/internal/middleware"
 
 	"github.com/gogf/gf/v2/net/ghttp"
 )

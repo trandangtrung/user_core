@@ -7,7 +7,7 @@ package user
 import (
 	"context"
 
-	"demo/api/user/v1"
+	"github.com/quannv/strongbody-api/api/user/v1"
 )
 
 type IUserV1 interface {

@@ -4,24 +4,15 @@ import (
 	"context"
 	"errors"
 
-	"demo/internal/entity"
+	v1 "github.com/quannv/strongbody-api/api/user/v1"
+	"github.com/quannv/strongbody-api/internal/entity"
+	utils "github.com/quannv/strongbody-api/utility"
 
 	"gorm.io/gorm"
 )
 
 type (
 	UserRepository interface {
-		CreateApp(ctx context.Context, app *entity.App) (*entity.App, error)
-		GetAppByID(ctx context.Context, id uint) (*entity.App, error)
-		UpdateApp(ctx context.Context, app *entity.App) (*entity.App, error)
-		DeleteApp(ctx context.Context, id uint) error
-
-		CreateRole(ctx context.Context, role *entity.Role) (*entity.Role, error)
-		GetRoleByID(ctx context.Context, id uint) (*entity.Role, error)
-		GetRolesByUserIDAndAppName(ctx context.Context, userID uint, appName string) ([]*entity.Role, error)
-		UpdateRole(ctx context.Context, role *entity.Role) (*entity.Role, error)
-		DeleteRole(ctx context.Context, id uint) error
-
 		CreateToken(ctx context.Context, token *entity.Token) (*entity.Token, error)
 		GetTokenByID(ctx context.Context, id uint) (*entity.Token, error)
 		UpdateToken(ctx context.Context, token *entity.Token) (*entity.Token, error)
@@ -34,6 +25,7 @@ type (
 		GetRolesByUserID(ctx context.Context, userID uint) ([]*entity.Role, error)
 
 		CreateUser(ctx context.Context, user *entity.User) (*entity.User, error)
+		CreateUserByAdmin(ctx context.Context, req *v1.CreateReq) (*entity.User, error)
 		GetUserByID(ctx context.Context, id uint) (*entity.User, error)
 		GetUserByEmail(ctx context.Context, email string) (*entity.User, error)
 		UpdateUser(ctx context.Context, user *entity.User) (*entity.User, error)
@@ -46,88 +38,6 @@ type (
 
 func NewUserRepository(db *gorm.DB) UserRepository {
 	return &userRepository{db: db}
-}
-
-func (r *userRepository) CreateApp(ctx context.Context, app *entity.App) (*entity.App, error) {
-	if err := r.db.WithContext(ctx).Create(app).Error; err != nil {
-		return nil, err
-	}
-	return app, nil
-}
-
-func (r *userRepository) GetAppByID(ctx context.Context, id uint) (*entity.App, error) {
-	var app entity.App
-	if err := r.db.WithContext(ctx).First(&app, id).Error; err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, nil
-		}
-		return nil, err
-	}
-	return &app, nil
-}
-
-func (r *userRepository) UpdateApp(ctx context.Context, app *entity.App) (*entity.App, error) {
-	if err := r.db.WithContext(ctx).Save(app).Error; err != nil {
-		return nil, err
-	}
-	return app, nil
-}
-
-func (r *userRepository) DeleteApp(ctx context.Context, id uint) error {
-	if err := r.db.WithContext(ctx).Delete(&entity.App{}, id).Error; err != nil {
-		return err
-	}
-	return nil
-}
-
-func (r *userRepository) CreateRole(ctx context.Context, role *entity.Role) (*entity.Role, error) {
-	if err := r.db.WithContext(ctx).Create(role).Error; err != nil {
-		return nil, err
-	}
-	return role, nil
-}
-
-func (r *userRepository) GetRoleByID(ctx context.Context, id uint) (*entity.Role, error) {
-	var role entity.Role
-	if err := r.db.WithContext(ctx).First(&role, id).Error; err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, nil
-		}
-		return nil, err
-	}
-	return &role, nil
-}
-
-func (r *userRepository) GetRolesByUserIDAndAppName(ctx context.Context, userID uint, appName string) ([]*entity.Role, error) {
-	var roles []*entity.Role
-
-	err := r.db.WithContext(ctx).
-		Joins("JOIN user_roles ON user_roles.role_id = roles.id").
-		Joins("JOIN apps ON apps.id = roles.app_id").
-		Where("user_roles.user_id = ? AND apps.name = ?", userID, appName).
-		Find(&roles).Error
-
-	if err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, nil
-		}
-		return nil, err
-	}
-	return roles, nil
-}
-
-func (r *userRepository) UpdateRole(ctx context.Context, role *entity.Role) (*entity.Role, error) {
-	if err := r.db.WithContext(ctx).Save(role).Error; err != nil {
-		return nil, err
-	}
-	return role, nil
-}
-
-func (r *userRepository) DeleteRole(ctx context.Context, id uint) error {
-	if err := r.db.WithContext(ctx).Delete(&entity.Role{}, id).Error; err != nil {
-		return err
-	}
-	return nil
 }
 
 func (r *userRepository) CreateToken(ctx context.Context, token *entity.Token) (*entity.Token, error) {
@@ -233,4 +143,75 @@ func (r *userRepository) DeleteUser(ctx context.Context, id uint) error {
 		return err
 	}
 	return nil
+}
+
+func (u *userRepository) CreateUserByAdmin(ctx context.Context, req *v1.CreateReq) (*entity.User, error) {
+	var createdUser *entity.User
+
+	err := u.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
+		// 1. Check if email exists
+		var count int64
+		if err := tx.Model(&entity.User{}).Where("email = ?", req.Email).Count(&count).Error; err != nil {
+			return err
+		}
+		if count > 0 {
+			return errors.New("email is already exist")
+		}
+
+		// 2. Hash password
+		passwordHashed, err := utils.HashPassword(req.Password)
+		if err != nil {
+			return err
+		}
+
+		// 3. Create user
+		user := &entity.User{
+			UserName:       req.UserName,
+			Email:          req.Email,
+			PasswordHashed: passwordHashed,
+			Mobile:         req.Mobile,
+		}
+		if err := tx.Create(user).Error; err != nil {
+			return err
+		}
+
+		// 4. Get role by ID
+		var role entity.Role
+		if err := tx.First(&role, req.Role).Error; err != nil {
+			if errors.Is(err, gorm.ErrRecordNotFound) {
+				return errors.New("role is not exist")
+			}
+			return err
+		}
+
+		// 5. Attach role to user
+		if err := tx.Model(user).Association("Roles").Append(&role); err != nil {
+			return err
+		}
+
+		// 6. Attach apps
+		var apps []*entity.App
+		for _, appID := range req.Apps {
+			var app entity.App
+			if err := tx.First(&app, appID).Error; err != nil {
+				if errors.Is(err, gorm.ErrRecordNotFound) {
+					return errors.New("app is not exist")
+				}
+				return err
+			}
+			apps = append(apps, &app)
+		}
+		if err := tx.Model(user).Association("Apps").Append(apps); err != nil {
+			return err
+		}
+
+		createdUser = user
+		return nil
+	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	return createdUser, nil
 }

@@ -2,11 +2,12 @@ package service
 
 import (
 	"context"
-	v1 "demo/api/app/v1"
-	"demo/internal/entity"
-	"demo/internal/repository"
 
-	"github.com/gogf/gf/v2/errors/gcode"
+	v1 "github.com/quannv/strongbody-api/api/app/v1"
+	"github.com/quannv/strongbody-api/internal/entity"
+	"github.com/quannv/strongbody-api/internal/repository"
+	rescode "github.com/quannv/strongbody-api/utility/resCode"
+
 	"github.com/gogf/gf/v2/errors/gerror"
 	"github.com/gogf/gf/v2/os/gtime"
 )
@@ -19,24 +20,24 @@ type (
 		Delete(ctx context.Context, id uint) error
 	}
 	appService struct {
-		userRepo repository.UserRepository
+		appRepo repository.AppRepository
 	}
 )
 
-func NewAppService(userRepo repository.UserRepository) AppService {
+func NewAppService(appRepo repository.AppRepository) AppService {
 	return &appService{
-		userRepo: userRepo,
+		appRepo: appRepo,
 	}
 }
 
 func (s *appService) Get(ctx context.Context, req *v1.GetReq) (*v1.GetRes, error) {
 
-	app, err := s.userRepo.GetAppByID(ctx, req.Id)
+	app, err := s.appRepo.GetAppByID(ctx, req.Id)
 	if err != nil {
-		return nil, gerror.WrapCode(gcode.CodeInternalError, err, "failed to get platform")
+		return nil, gerror.WrapCode(rescode.AppGetFailed, err, "failed to get app")
 	}
 	if app == nil {
-		return nil, gerror.NewCode(gcode.CodeNotFound, "platform not found")
+		return nil, gerror.NewCode(rescode.AppNotFound, "platform not found")
 	}
 
 	return &v1.GetRes{
@@ -52,9 +53,9 @@ func (s *appService) Create(ctx context.Context, req *v1.CreateReq) (*v1.CreateR
 		Config: req.Config,
 	}
 
-	created, err := s.userRepo.CreateApp(ctx, newApp)
+	created, err := s.appRepo.CreateApp(ctx, newApp)
 	if err != nil {
-		return nil, gerror.WrapCode(gcode.CodeInternalError, err, "failed to create platform")
+		return nil, gerror.WrapCode(rescode.AppCreateFailed, err, "failed to create app")
 	}
 
 	return &v1.CreateRes{
@@ -66,14 +67,14 @@ func (s *appService) Create(ctx context.Context, req *v1.CreateReq) (*v1.CreateR
 
 func (s *appService) Update(ctx context.Context, req *v1.UpdateReq) (*v1.UpdateRes, error) {
 	// check if the app exists
-	existingApp, err := s.userRepo.GetAppByID(ctx, req.Id)
+	existingApp, err := s.appRepo.GetAppByID(ctx, req.Id)
 	if err != nil {
-		return nil, gerror.WrapCode(gcode.CodeInternalError, err, "failed to get app")
+		return nil, gerror.WrapCode(rescode.AppGetFailed, err, "failed to get app")
 	}
 
-	updatePlatform, err := s.userRepo.UpdateApp(ctx, existingApp)
+	updatePlatform, err := s.appRepo.UpdateApp(ctx, existingApp)
 	if err != nil {
-		return nil, gerror.WrapCode(gcode.CodeInternalError, err, "failed to update app")
+		return nil, gerror.WrapCode(rescode.AppUpdateFailed, err, "failed to update app")
 	}
 
 	return &v1.UpdateRes{
@@ -85,9 +86,9 @@ func (s *appService) Update(ctx context.Context, req *v1.UpdateReq) (*v1.UpdateR
 }
 
 func (s *appService) Delete(ctx context.Context, id uint) error {
-	err := s.userRepo.DeleteApp(ctx, id)
+	err := s.appRepo.DeleteApp(ctx, id)
 	if err != nil {
-		return gerror.WrapCode(gcode.CodeInternalError, err, "failed to delete platform")
+		return gerror.WrapCode(rescode.AppDeleteFailed, err, "failed to delete app")
 	}
 
 	return nil

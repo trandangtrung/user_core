@@ -3,8 +3,8 @@ package role
 import (
 	"context"
 
-	v1 "demo/api/role/v1"
-	"demo/global"
+	v1 "github.com/quannv/strongbody-api/api/role/v1"
+	"github.com/quannv/strongbody-api/global"
 )
 
 func (c *ControllerV1) Create(ctx context.Context, req *v1.CreateReq) (res *v1.CreateRes, err error) {

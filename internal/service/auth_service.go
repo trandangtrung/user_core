@@ -2,17 +2,17 @@ package service
 
 import (
 	"context"
-	v1 "demo/api/auth/v1"
-	"demo/global"
-	"demo/internal/config"
-	"demo/internal/consts"
-	"demo/internal/entity"
-	"demo/internal/repository"
-	utils "demo/utility"
-	"demo/utility/token"
-	"fmt"
 
-	"github.com/gogf/gf/v2/errors/gcode"
+	v1 "github.com/quannv/strongbody-api/api/auth/v1"
+	"github.com/quannv/strongbody-api/global"
+	"github.com/quannv/strongbody-api/internal/config"
+	"github.com/quannv/strongbody-api/internal/consts"
+	"github.com/quannv/strongbody-api/internal/entity"
+	"github.com/quannv/strongbody-api/internal/repository"
+	utils "github.com/quannv/strongbody-api/utility"
+	rescode "github.com/quannv/strongbody-api/utility/resCode"
+	"github.com/quannv/strongbody-api/utility/token"
+
 	"github.com/gogf/gf/v2/errors/gerror"
 )
 
@@ -25,12 +25,14 @@ type (
 	}
 	authService struct {
 		userRepo repository.UserRepository
+		roleRepo repository.RoleRepository
 	}
 )
 
-func NewAuthService(userRepo repository.UserRepository) AuthService {
+func NewAuthService(userRepo repository.UserRepository, roleRepo repository.RoleRepository) AuthService {
 	return &authService{
 		userRepo: userRepo,
+		roleRepo: roleRepo,
 	}
 }
 
@@ -38,35 +40,35 @@ func (a *authService) Login(ctx context.Context, req *v1.LoginReq) (res *v1.Logi
 	// check if the email is already exist
 	user, err := a.checkEmail(ctx, req.Email)
 	if err != nil {
-		return nil, fmt.Errorf("email is not exist")
+		return nil, gerror.NewCode(rescode.EmailNotFound, "email not found")
 	}
 
 	err = utils.CheckPassword(user.PasswordHashed, req.Password)
 	if err != nil {
-		return nil, fmt.Errorf("password is wrong")
+		return nil, gerror.NewCode(rescode.EmailNotFound, "email not found")
 	}
 
 	accessToken, _, err := global.Token.CreateToken(int(user.ID), "", config.GetConfig().JwtCfg.TimeAccess)
 	if err != nil {
-		return nil, gerror.NewCode(gcode.CodeInternalError, err.Error())
+		return nil, gerror.NewCode(rescode.AccessTokenCreationFailed, err.Error())
 	}
 
 	refreshToken, _, err := global.Token.CreateToken(int(user.ID), "", config.GetConfig().JwtCfg.TimeRefresh)
 	if err != nil {
-		return nil, gerror.NewCode(gcode.CodeInternalError, err.Error())
+		return nil, gerror.NewCode(rescode.RefreshTokenCreationFailed, err.Error())
 	}
 
 	scope := ctx.Value(consts.AuthorizationScope).(string)
 
-	roles, err := a.userRepo.GetRolesByUserIDAndAppName(ctx, user.ID, scope)
+	roles, err := a.roleRepo.GetRolesByUserIDAndAppName(ctx, user.ID, scope)
 	if err != nil {
 		return nil, err
 	}
 	if roles == nil {
-		return nil, gerror.NewCode(gcode.CodeNotFound, "role is not exist")
+		return nil, gerror.NewCode(rescode.RoleNotFound, "role is not exist")
 	}
 	if len(roles) == 0 {
-		return nil, gerror.NewCode(gcode.CodeNotFound, "role is not exist")
+		return nil, gerror.NewCode(rescode.RoleNotFound, "role is not exist")
 	}
 
 	token, err := a.userRepo.CreateToken(ctx, &entity.Token{
@@ -97,30 +99,30 @@ func (a *authService) LoginByToken(ctx context.Context, req *v1.LoginByTokenReq)
 	user, err := a.userRepo.GetUserByID(ctx, uint(payload.Id))
 
 	if err != nil {
-		return nil, gerror.NewCode(gcode.CodeNotFound, "user is not exist")
+		return nil, gerror.NewCode(rescode.UserNotFound, "user is not exist")
 	}
 
 	accessToken, _, err := global.Token.CreateToken(payload.Id, "", config.GetConfig().JwtCfg.TimeAccess)
 	if err != nil {
-		return nil, gerror.NewCode(gcode.CodeInternalError, err.Error())
+		return nil, gerror.NewCode(rescode.AccessTokenCreationFailed, err.Error())
 	}
 
 	refreshToken, _, err := global.Token.CreateToken(payload.Id, "", config.GetConfig().JwtCfg.TimeRefresh)
 	if err != nil {
-		return nil, gerror.NewCode(gcode.CodeInternalError, err.Error())
+		return nil, gerror.NewCode(rescode.AccessTokenCreationFailed, err.Error())
 	}
 
 	scope := ctx.Value(consts.AuthorizationScope).(string)
 
-	roles, err := a.userRepo.GetRolesByUserIDAndAppName(ctx, user.ID, scope)
+	roles, err := a.roleRepo.GetRolesByUserIDAndAppName(ctx, user.ID, scope)
 	if err != nil {
 		return nil, err
 	}
 	if roles == nil {
-		return nil, gerror.NewCode(gcode.CodeNotFound, "role is not exist")
+		return nil, gerror.NewCode(rescode.UserNotFound, "user is not exist")
 	}
 	if len(roles) == 0 {
-		return nil, gerror.NewCode(gcode.CodeNotFound, "role is not exist")
+		return nil, gerror.NewCode(rescode.UserNotFound, "user is not exist")
 	}
 
 	token, err := a.userRepo.CreateToken(ctx, &entity.Token{
@@ -153,7 +155,7 @@ func (a *authService) Signup(ctx context.Context, req *v1.SignupReq) (res *v1.Si
 
 	hashedPassword, err := utils.HashPassword(req.Password)
 	if err != nil {
-		return nil, err
+		return nil, gerror.NewCode(rescode.HashPasswordFailed, "hash password failed")
 	}
 
 	_, err = a.userRepo.CreateUser(ctx, &entity.User{
@@ -175,7 +177,7 @@ func (a *authService) RefreshToken(ctx context.Context, req *v1.RefreshTokenReq)
 
 	accessToken, _, err := global.Token.CreateToken(int(payload.Id), payload.Permissions, config.GetConfig().JwtCfg.TimeAccess)
 	if err != nil {
-		return nil, err
+		return nil, gerror.NewCode(rescode.AccessTokenCreationFailed, err.Error())
 	}
 
 	return &v1.RefreshTokenRes{
@@ -186,10 +188,10 @@ func (a *authService) RefreshToken(ctx context.Context, req *v1.RefreshTokenReq)
 func (a *authService) checkEmail(ctx context.Context, email string) (*entity.User, error) {
 	user, err := a.userRepo.GetUserByEmail(ctx, email)
 	if err != nil {
-		return nil, gerror.NewCode(gcode.CodeNotFound, "email is not exist")
+		return nil, gerror.NewCode(rescode.EmailNotFound, "email is not exist")
 	}
 	if user == nil {
-		return nil, gerror.NewCode(gcode.CodeNotFound, "email is not exist")
+		return nil, gerror.NewCode(rescode.EmailNotFound, "email is not exist")
 	}
 
 	global.Logger.Debug(ctx, user)

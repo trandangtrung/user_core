@@ -1,8 +1,8 @@
 package userBuyerRouter
 
 import (
-	"demo/api/user"
-	"demo/internal/middleware"
+	"github.com/quannv/strongbody-api/api/user"
+	"github.com/quannv/strongbody-api/internal/middleware"
 
 	"github.com/gogf/gf/v2/net/ghttp"
 )

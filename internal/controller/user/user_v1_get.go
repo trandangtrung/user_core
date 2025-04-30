@@ -6,8 +6,8 @@ import (
 	"github.com/gogf/gf/v2/errors/gcode"
 	"github.com/gogf/gf/v2/errors/gerror"
 
-	v1 "demo/api/user/v1"
-	"demo/global"
+	v1 "github.com/quannv/strongbody-api/api/user/v1"
+	"github.com/quannv/strongbody-api/global"
 )
 
 func (c *ControllerV1) Get(ctx context.Context, req *v1.GetReq) (res *v1.GetRes, err error) {

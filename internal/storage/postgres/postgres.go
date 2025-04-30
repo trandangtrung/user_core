@@ -1,10 +1,11 @@
 package postgres
 
 import (
-	"demo/internal/config"
-	"demo/internal/entity"
 	"log"
 	"sync"
+
+	"github.com/quannv/strongbody-api/internal/config"
+	"github.com/quannv/strongbody-api/internal/entity"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -56,8 +57,6 @@ func autoMigrate(db *gorm.DB) error {
 		&entity.User{},
 		&entity.App{},
 		&entity.Role{},
-		// &entity.UserRole{},
-		// &entity.UserApp{},
 		&entity.Token{},
 	)
 }

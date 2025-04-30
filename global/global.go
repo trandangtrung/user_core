@@ -1,8 +1,8 @@
 package global
 
 import (
-	mail "demo/utility/gmail"
-	"demo/utility/token"
+	mail "github.com/quannv/strongbody-api/utility/gmail"
+	"github.com/quannv/strongbody-api/utility/token"
 
 	"github.com/gogf/gf/v2/os/glog"
 )

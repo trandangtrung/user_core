@@ -1,7 +1,7 @@
 package initialize
 
 import (
-	"demo/global"
+	"github.com/quannv/strongbody-api/global"
 
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/os/glog"

@@ -1,15 +1,16 @@
 package main
 
 import (
-	"demo/internal/initialize"
-	_ "demo/internal/packed"
-	"demo/internal/storage/postgres"
 	"fmt"
 	"os"
 
+	"github.com/quannv/strongbody-api/internal/initialize"
+	_ "github.com/quannv/strongbody-api/internal/packed"
+	"github.com/quannv/strongbody-api/internal/storage/postgres"
+
 	"github.com/gogf/gf/v2/os/gctx"
 
-	"demo/internal/cmd"
+	"github.com/quannv/strongbody-api/internal/cmd"
 )
 
 func main() {

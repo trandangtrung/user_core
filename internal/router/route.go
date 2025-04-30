@@ -1,17 +1,17 @@
 package router
 
 import (
-	"demo/internal/controller/app"
-	"demo/internal/controller/auth"
-	"demo/internal/controller/role"
-	"demo/internal/controller/user"
-	"demo/internal/middleware"
-	"demo/internal/repository"
-	adminRouter "demo/internal/router/admin"
-	buyerRouter "demo/internal/router/buyer"
-	sellerRouter "demo/internal/router/seller"
-	"demo/internal/service"
-	"demo/internal/storage/postgres"
+	"github.com/quannv/strongbody-api/internal/controller/app"
+	"github.com/quannv/strongbody-api/internal/controller/auth"
+	"github.com/quannv/strongbody-api/internal/controller/role"
+	"github.com/quannv/strongbody-api/internal/controller/user"
+	"github.com/quannv/strongbody-api/internal/middleware"
+	"github.com/quannv/strongbody-api/internal/repository"
+	adminRouter "github.com/quannv/strongbody-api/internal/router/admin"
+	buyerRouter "github.com/quannv/strongbody-api/internal/router/buyer"
+	sellerRouter "github.com/quannv/strongbody-api/internal/router/seller"
+	"github.com/quannv/strongbody-api/internal/service"
+	"github.com/quannv/strongbody-api/internal/storage/postgres"
 
 	"github.com/gogf/gf/v2/net/ghttp"
 )
@@ -23,12 +23,14 @@ func Router(r *ghttp.RouterGroup) {
 
 	// init repository
 	userRepo := repository.NewUserRepository(db)
+	roleRepo := repository.NewRoleRepository(db)
+	appRepo := repository.NewAppRepository(db)
 
 	// init logic
-	authService := service.NewAuthService(userRepo)
-	appService := service.NewAppService(userRepo)
-	roleService := service.NewRoleService(userRepo)
-	userService := service.NewUserService(userRepo)
+	authService := service.NewAuthService(userRepo, roleRepo)
+	userService := service.NewUserService(userRepo, roleRepo, appRepo)
+	appService := service.NewAppService(appRepo)
+	roleService := service.NewRoleService(roleRepo)
 
 	// init controller
 	authController := auth.NewV1(authService)

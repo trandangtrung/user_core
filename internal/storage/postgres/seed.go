@@ -1,9 +1,10 @@
 package postgres
 
 import (
-	"demo/internal/entity"
-	utils "demo/utility"
 	"time"
+
+	"github.com/quannv/strongbody-api/internal/entity"
+	utils "github.com/quannv/strongbody-api/utility"
 )
 
 // Seed inserts initial data for testing
@@ -27,6 +28,15 @@ func (d *Database) Seed() error {
 		return err
 	}
 
+	app1 := &entity.App{
+		Name:   "shop",
+		Key:    "network-key",
+		Config: `{"key": "value"}`,
+	}
+	if err := db.Create(app1).Error; err != nil {
+		return err
+	}
+
 	// Create Role
 	role := &entity.Role{
 		Name:        "admin",
@@ -35,6 +45,16 @@ func (d *Database) Seed() error {
 		AppID:       app.ID,
 	}
 	if err := db.Create(role).Error; err != nil {
+		return err
+	}
+
+	role1 := &entity.Role{
+		Name:        "bảo vệ",
+		Key:         "admin",
+		Description: "Administrator role",
+		AppID:       app1.ID,
+	}
+	if err := db.Create(role1).Error; err != nil {
 		return err
 	}
 
@@ -64,8 +84,16 @@ func (d *Database) Seed() error {
 		return err
 	}
 
+	if err := db.Model(&user).Association("Apps").Append(app1); err != nil {
+		return err
+	}
+
 	// Attach Role to User (user_roles)
 	if err := db.Model(&user).Association("Roles").Append(role); err != nil {
+		return err
+	}
+
+	if err := db.Model(&user).Association("Roles").Append(role1); err != nil {
 		return err
 	}
 

@@ -3,8 +3,8 @@ package auth
 import (
 	"context"
 
-	v1 "demo/api/auth/v1"
-	"demo/global"
+	v1 "github.com/quannv/strongbody-api/api/auth/v1"
+	"github.com/quannv/strongbody-api/global"
 )
 
 func (c *ControllerV1) Login(ctx context.Context, req *v1.LoginReq) (res *v1.LoginRes, err error) {

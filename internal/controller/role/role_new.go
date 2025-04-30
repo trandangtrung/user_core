@@ -5,8 +5,8 @@
 package role
 
 import (
-	"demo/api/role"
-	"demo/internal/service"
+	"github.com/quannv/strongbody-api/api/role"
+	"github.com/quannv/strongbody-api/internal/service"
 )
 
 type ControllerV1 struct {
