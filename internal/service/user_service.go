@@ -14,6 +14,7 @@ type (
 	UserService interface {
 		CreateByAdmin(ctx context.Context, req *v1.CreateReq) (*v1.CreateRes, error)
 		GetByID(ctx context.Context, req *v1.GetReq) (res *v1.GetRes, err error)
+		ListUsers(ctx context.Context, req *v1.ListUsersReq) (res *v1.ListUsersRes, err error)
 		Update(ctx context.Context, req *v1.UpdateReq) (res *v1.UpdateRes, err error)
 		Delete(ctx context.Context, req *v1.DeleteReq) (res *v1.DeleteRes, err error)
 	}
@@ -53,6 +54,10 @@ func (u *userService) GetByID(ctx context.Context, req *v1.GetReq) (res *v1.GetR
 		Id:    user.ID,
 		Email: user.Email,
 	}, nil
+}
+
+func (u *userService) ListUsers(ctx context.Context, req *v1.ListUsersReq) (res *v1.ListUsersRes, err error) {
+	return &v1.ListUsersRes{}, nil
 }
 
 func (u *userService) Update(ctx context.Context, req *v1.UpdateReq) (res *v1.UpdateRes, err error) {

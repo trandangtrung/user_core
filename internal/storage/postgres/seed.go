@@ -64,6 +64,11 @@ func (d *Database) Seed() error {
 		return err
 	}
 
+	hashedPassword1, err := utils.HashPassword("user")
+	if err != nil {
+		return err
+	}
+
 	// Create User
 	user := &entity.User{
 		Email:          "admin@example.com",
@@ -79,6 +84,20 @@ func (d *Database) Seed() error {
 		return err
 	}
 
+	user1 := &entity.User{
+		Email:          "user@example.com",
+		PasswordHashed: hashedPassword1,
+		UserName:       "user",
+		FirstName:      "User",
+		LastName:       "User",
+		BirthDate:      ptrTime(time.Date(1990, 1, 1, 0, 0, 0, 0, time.UTC)),
+		Language:       "en",
+		Currency:       "USD",
+	}
+	if err := db.Create(user1).Error; err != nil {
+		return err
+	}
+
 	// Attach App to User (user_apps)
 	if err := db.Model(&user).Association("Apps").Append(app); err != nil {
 		return err
@@ -88,12 +107,20 @@ func (d *Database) Seed() error {
 		return err
 	}
 
+	if err := db.Model(&user1).Association("Apps").Append(app); err != nil {
+		return err
+	}
+
 	// Attach Role to User (user_roles)
 	if err := db.Model(&user).Association("Roles").Append(role); err != nil {
 		return err
 	}
 
 	if err := db.Model(&user).Association("Roles").Append(role1); err != nil {
+		return err
+	}
+
+	if err := db.Model(&user1).Association("Roles").Append(role); err != nil {
 		return err
 	}
 
