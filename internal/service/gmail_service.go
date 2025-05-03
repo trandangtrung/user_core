@@ -9,6 +9,8 @@ import (
 
 type (
 	GmailService interface {
+		Welcome(userName string, to []string, attachFiles []string) error
+		CodeOtp(userName string, code string, to []string, attachFiles []string) error
 	}
 
 	gmailService struct {
@@ -29,7 +31,7 @@ func (g *gmailService) Welcome(userName string, to []string, attachFiles []strin
 		"UserName":       userName,
 		"SupportContact": "examle@strongbody.ai",
 	}
-	tmpl, err := g.template.Get("/resouce/template/welcome", "index.html", data)
+	tmpl, err := g.template.Get("/resource/template/welcome", "index.html", data)
 
 	if err != nil {
 		return gerror.NewCode(rescode.InternalError, "get template error")
@@ -48,12 +50,12 @@ func (g *gmailService) Welcome(userName string, to []string, attachFiles []strin
 	return nil
 }
 
-func (g *gmailService) CodeOtp(userName string, code int, to []string, attachFiles []string) error {
+func (g *gmailService) CodeOtp(userName string, code string, to []string, attachFiles []string) error {
 	data := map[string]interface{}{
 		"UserName":   userName,
 		"VerifyCode": code,
 	}
-	tmpl, err := g.template.Get("/resouce/template/code-otp", "index.html", data)
+	tmpl, err := g.template.Get("/resource/template/code-otp", "index.html", data)
 
 	if err != nil {
 		return gerror.NewCode(rescode.InternalError, "get template error")

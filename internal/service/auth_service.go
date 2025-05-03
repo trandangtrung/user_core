@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"strings"
 	"time"
 
 	v1 "github.com/quannv/strongbody-api/api/auth/v1"
@@ -28,15 +29,17 @@ type (
 		ResendVerifyEmail(ctx context.Context, req *v1.ResendVerifyEmailReq) (res *v1.ResendVerifyEmailRes, err error)
 	}
 	authService struct {
-		userRepo repository.UserRepository
-		roleRepo repository.RoleRepository
+		userRepo    repository.UserRepository
+		roleRepo    repository.RoleRepository
+		mailService GmailService
 	}
 )
 
-func NewAuthService(userRepo repository.UserRepository, roleRepo repository.RoleRepository) AuthService {
+func NewAuthService(userRepo repository.UserRepository, roleRepo repository.RoleRepository, mailService GmailService) AuthService {
 	return &authService{
-		userRepo: userRepo,
-		roleRepo: roleRepo,
+		userRepo:    userRepo,
+		roleRepo:    roleRepo,
+		mailService: mailService,
 	}
 }
 
@@ -220,12 +223,14 @@ func (a *authService) Signup(ctx context.Context, req *v1.SignupReq) (res *v1.Si
 	}
 
 	// send email
-	var toEmail []string
-	toEmail = append(toEmail, req.Email)
-	err = global.Gmail.SendEmail("Strongbody - Verify Email", "Your OTP is: "+otp, toEmail, nil, nil, nil)
+	userName := req.Email
+	if at := strings.Index(req.Email, "@"); at != -1 {
+		userName = req.Email[:at]
+	}
+	err = a.mailService.CodeOtp(userName, otp, []string{req.Email}, nil)
 	if err != nil {
 		tx.Rollback()
-		return nil, gerror.NewCode(rescode.EmailOTPSendFailed, err.Error())
+		return nil, gerror.NewCode(rescode.InternalError, err.Error())
 	}
 
 	// commit transaction
@@ -317,6 +322,16 @@ func (a *authService) VerifyEmail(ctx context.Context, req *v1.VerifyEmailReq) (
 	if err := tx.Commit().Error; err != nil {
 		tx.Rollback()
 		return nil, gerror.NewCode(rescode.InternalError, "transaction failed")
+	}
+
+	// send welcome email
+	userName := req.Email
+	if at := strings.Index(req.Email, "@"); at != -1 {
+		userName = req.Email[:at]
+	}
+	err = a.mailService.Welcome(userName, []string{req.Email}, nil)
+	if err != nil {
+		return nil, gerror.NewCode(rescode.InternalError, err.Error())
 	}
 
 	return &v1.VerifyEmailRes{

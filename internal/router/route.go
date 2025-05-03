@@ -1,6 +1,7 @@
 package router
 
 import (
+	"github.com/quannv/strongbody-api/global"
 	"github.com/quannv/strongbody-api/internal/controller/app"
 	"github.com/quannv/strongbody-api/internal/controller/auth"
 	"github.com/quannv/strongbody-api/internal/controller/role"
@@ -27,7 +28,8 @@ func Router(r *ghttp.RouterGroup) {
 	appRepo := repository.NewAppRepository(db)
 
 	// init logic
-	authService := service.NewAuthService(userRepo, roleRepo)
+	mailService := service.NewGmailService(global.Gmail, global.Template)
+	authService := service.NewAuthService(userRepo, roleRepo, mailService)
 	userService := service.NewUserService(userRepo, roleRepo, appRepo)
 	appService := service.NewAppService(appRepo)
 	roleService := service.NewRoleService(roleRepo)
