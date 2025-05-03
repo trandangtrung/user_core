@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <title>Verify Your Email</title>
+    </head>
+    <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333">
+        <p>Hi {{.Username}},</p>
+
+        <p>
+            Thanks for joining <strong>StrongBody</strong>! To complete your
+            signup and start enjoying the platform, please verify your email
+            address.
+        </p>
+
+        <p>
+            <strong
+                >Verify Code:
+                <span style="font-size: 1.2em">{{.VerifyCode}}</span></strong
+            >
+        </p>
+
+        <p>Thank you for choosing StrongBody!</p>
+
+        <p>
+            Best regards,<br />
+            The StrongBody Team
+        </p>
+    </body>
+</html>

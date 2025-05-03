@@ -24,7 +24,11 @@ func NewGmailService(gmail mail.EmailSender, template template.ITemplate) GmailS
 	}
 }
 
-func (g *gmailService) Welcome(data map[string]interface{}, to []string, attachFiles []string) error {
+func (g *gmailService) Welcome(userName string, to []string, attachFiles []string) error {
+	data := map[string]interface{}{
+		"UserName":       userName,
+		"SupportContact": "examle@strongbody.ai",
+	}
 	tmpl, err := g.template.Get("/resouce/template/welcome", "index.html", data)
 
 	if err != nil {
@@ -32,7 +36,31 @@ func (g *gmailService) Welcome(data map[string]interface{}, to []string, attachF
 
 	}
 
-	subject := "A test email"
+	subject := "Welcome to Strongbody! Start Your Health Journey Today!"
+	content := tmpl
+
+	err = g.gmail.SendEmail(subject, content, to, nil, nil, attachFiles)
+
+	if err != nil {
+		return gerror.NewCode(rescode.InternalError, "send email error")
+	}
+
+	return nil
+}
+
+func (g *gmailService) CodeOtp(userName string, code int, to []string, attachFiles []string) error {
+	data := map[string]interface{}{
+		"UserName":   userName,
+		"VerifyCode": code,
+	}
+	tmpl, err := g.template.Get("/resouce/template/code-otp", "index.html", data)
+
+	if err != nil {
+		return gerror.NewCode(rescode.InternalError, "get template error")
+
+	}
+
+	subject := "Verify Your Email to Complete Your StrongBody SignUp!"
 	content := tmpl
 
 	err = g.gmail.SendEmail(subject, content, to, nil, nil, attachFiles)
