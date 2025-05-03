@@ -11,21 +11,22 @@ func toUpper(str string) string {
 	return strings.ToUpper(str)
 }
 
-type TemplateI interface {
-	Get(nameFile string, data map[string]interface{}) (string, error)
+type ITemplate interface {
+	Get(path string, nameFile string, data map[string]interface{}) (string, error)
 }
 
 type Template struct {
 }
 
-func NewTemplate() TemplateI {
+func NewTemplate() ITemplate {
 	return &Template{}
 }
 
-func (t *Template) Get(nameFile string, data map[string]interface{}) (string, error) {
+func (t *Template) Get(path string, nameFile string, data map[string]interface{}) (string, error) {
 	view := gview.New()
 
-	view.SetPath("resource/template")
+	view.SetPath(path)
+	// view.SetPath("resource/template")
 
 	// view.BindFuncMap(g.MapStrAny{
 	// 	"toUpper": toUpper,
@@ -40,7 +41,3 @@ func (t *Template) Get(nameFile string, data map[string]interface{}) (string, er
 
 	return tmpl, err
 }
-
-// ExampleS
-// tmpl,err := template.Get("layout.html",map[string]string{toUpper: "toUpper"})
-// sender.SendEmail(subject, tmpl, to, nil, nil, attachFiles)

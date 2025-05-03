@@ -11,10 +11,10 @@ import (
 )
 
 type Config struct {
-	ServerCfg ServerConfig
-	DbCfg     DatabaseConfig
-	JwtCfg    JwtConfig
-	MailCfg   MailConfig
+	ServerCfg  ServerConfig
+	DbCfg      DatabaseConfig
+	JwtCfg     JwtConfig
+	MailConfig mailConfig
 }
 
 type ServerConfig struct {
@@ -38,12 +38,10 @@ type JwtConfig struct {
 	TimeRefresh time.Duration
 }
 
-type MailConfig struct {
-	SmtpHost         string
-	SmtpPort         string
-	SmtpSenderName   string
-	SmtpAuthEmail    string
-	SmtpAuthPassword string
+type mailConfig struct {
+	NameEmail     string
+	AccountEmail  string
+	PasswordEmail string
 }
 
 var instance *Config
@@ -88,19 +86,17 @@ func load() (*Config, error) {
 		TimeRefresh: parseDuration(getEnv("TIME_REFRESH", "1000001h")),
 	}
 
-	mailConfig := MailConfig{
-		SmtpHost:         getEnv("SMTP_HOST", "smtp.gmail.com"),
-		SmtpPort:         getEnv("SMTP_PORT", "587"),
-		SmtpSenderName:   getEnv("SMTP_SENDER_NAME", "StrongBody"),
-		SmtpAuthEmail:    getEnv("SMTP_AUTH_EMAIL", ""),
-		SmtpAuthPassword: getEnv("SMTP_AUTH_PASSWORD", ""),
+	mailConfig := mailConfig{
+		NameEmail:     getEnv("NAME_EMAIL", "Nguyễn Đại Nghĩa"),
+		AccountEmail:  getEnv("ACCOUNT_EMAIL", ""),
+		PasswordEmail: getEnv("PASSWORD_EMAIL", ""),
 	}
 
 	return &Config{
-		ServerCfg: serverConfig,
-		DbCfg:     dbConfig,
-		JwtCfg:    jwtConfig,
-		MailCfg:   mailConfig,
+		ServerCfg:  serverConfig,
+		DbCfg:      dbConfig,
+		JwtCfg:     jwtConfig,
+		MailConfig: mailConfig,
 	}, nil
 }
 
