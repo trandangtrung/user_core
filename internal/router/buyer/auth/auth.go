@@ -9,6 +9,8 @@ import (
 
 func Register(r *ghttp.RouterGroup, middleware middleware.Middleware, authC auth.IAuthV1) {
 	r.Bind(authC.Signup)
+	r.Bind(authC.VerifyEmail)
+	r.Bind(authC.ResendVerifyEmail)
 
 	r.Group("/", func(group *ghttp.RouterGroup) {
 		group.Middleware(middleware.AuthMiddleware("", "", true))

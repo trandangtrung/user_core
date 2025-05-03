@@ -24,12 +24,22 @@ type (
 		CreateUserRole(ctx context.Context, user *entity.User, role *entity.Role) error
 		GetRolesByUserID(ctx context.Context, userID uint) ([]*entity.Role, error)
 
-		CreateUser(ctx context.Context, user *entity.User) (*entity.User, error)
+		CreateUser(ctx context.Context, tx *gorm.DB, user *entity.User) (*entity.User, error)
 		CreateUserByAdmin(ctx context.Context, req *v1.CreateReq) (*entity.User, error)
 		GetUserByID(ctx context.Context, id uint) (*entity.User, error)
 		GetUserByEmail(ctx context.Context, email string) (*entity.User, error)
 		UpdateUser(ctx context.Context, user *entity.User) (*entity.User, error)
 		DeleteUser(ctx context.Context, id uint) error
+
+		CreateEmailOTP(ctx context.Context, tx *gorm.DB, emailOtp *entity.EmailOTP) (*entity.EmailOTP, error)
+		GetEmailOTPByEmail(ctx context.Context, tx *gorm.DB, email string) (*entity.EmailOTP, error)
+		UpdateEmailOTP(ctx context.Context, tx *gorm.DB, emailOtp *entity.EmailOTP) (*entity.EmailOTP, error)
+		IsOtpValid(ctx context.Context, tx *gorm.DB, email string, otp string) (bool, error)
+
+		CreatePendingUser(ctx context.Context, tx *gorm.DB, pendingUser *entity.PendingUser) (*entity.PendingUser, error)
+		GetPendingUserByEmail(ctx context.Context, tx *gorm.DB, email string) (*entity.PendingUser, error)
+		UpdatePendingUser(ctx context.Context, tx *gorm.DB, pendingUser *entity.PendingUser) (*entity.PendingUser, error)
+		DeletePendingUser(ctx context.Context, tx *gorm.DB, id uint) error
 	}
 	userRepository struct {
 		db *gorm.DB
@@ -102,8 +112,8 @@ func (r *userRepository) GetRolesByUserID(ctx context.Context, userID uint) ([]*
 	return roles, nil
 }
 
-func (r *userRepository) CreateUser(ctx context.Context, user *entity.User) (*entity.User, error) {
-	if err := r.db.WithContext(ctx).Create(user).Error; err != nil {
+func (r *userRepository) CreateUser(ctx context.Context, tx *gorm.DB, user *entity.User) (*entity.User, error) {
+	if err := tx.WithContext(ctx).Create(user).Error; err != nil {
 		return nil, err
 	}
 	return user, nil
@@ -214,4 +224,83 @@ func (u *userRepository) CreateUserByAdmin(ctx context.Context, req *v1.CreateRe
 	}
 
 	return createdUser, nil
+}
+
+func (r *userRepository) CreateEmailOTP(ctx context.Context, tx *gorm.DB, emailOtp *entity.EmailOTP) (*entity.EmailOTP, error) {
+	if err := tx.WithContext(ctx).Create(emailOtp).Error; err != nil {
+		return nil, err
+	}
+	return emailOtp, nil
+}
+
+func (r *userRepository) GetEmailOTPByEmail(ctx context.Context, tx *gorm.DB, email string) (*entity.EmailOTP, error) {
+	var emailOtp entity.EmailOTP
+	if err := tx.WithContext(ctx).Where("email = ?", email).First(&emailOtp).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, nil
+		}
+		return nil, err
+	}
+	return &emailOtp, nil
+}
+
+func (r *userRepository) UpdateEmailOTP(ctx context.Context, tx *gorm.DB, emailOtp *entity.EmailOTP) (*entity.EmailOTP, error) {
+	if err := tx.WithContext(ctx).Where("id = ?", emailOtp.ID).Updates(emailOtp).Error; err != nil {
+		return nil, err
+	}
+	return emailOtp, nil
+}
+
+// SELECT * FROM email_otps
+// WHERE email = $1 AND otp = $2 AND is_used = FALSE AND expires_at > NOW()
+// ORDER BY created_at DESC
+// LIMIT 1;
+func (r *userRepository) IsOtpValid(ctx context.Context, tx *gorm.DB, email string, otp string) (bool, error) {
+	var emailOtp entity.EmailOTP
+	if err := tx.WithContext(ctx).Where("email = ? AND otp = ? AND used = FALSE AND expire_at > NOW()", email, otp).Order("created_at DESC").First(&emailOtp).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return false, nil
+		}
+		return false, err
+	}
+
+	// Mark the OTP as used
+	emailOtp.Used = true
+	if err := tx.WithContext(ctx).Save(&emailOtp).Error; err != nil {
+		return false, err
+	}
+
+	return true, nil
+}
+
+func (r *userRepository) CreatePendingUser(ctx context.Context, tx *gorm.DB, pendingUser *entity.PendingUser) (*entity.PendingUser, error) {
+	if err := tx.WithContext(ctx).Create(pendingUser).Error; err != nil {
+		return nil, err
+	}
+	return pendingUser, nil
+}
+
+func (r *userRepository) GetPendingUserByEmail(ctx context.Context, tx *gorm.DB, email string) (*entity.PendingUser, error) {
+	var pendingUser entity.PendingUser
+	if err := tx.WithContext(ctx).Where("email = ?", email).First(&pendingUser).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, nil
+		}
+		return nil, err
+	}
+	return &pendingUser, nil
+}
+
+func (r *userRepository) UpdatePendingUser(ctx context.Context, tx *gorm.DB, pendingUser *entity.PendingUser) (*entity.PendingUser, error) {
+	if err := tx.WithContext(ctx).Where("id = ?", pendingUser.ID).Updates(pendingUser).Error; err != nil {
+		return nil, err
+	}
+	return pendingUser, nil
+}
+
+func (r *userRepository) DeletePendingUser(ctx context.Context, tx *gorm.DB, id uint) error {
+	if err := tx.WithContext(ctx).Delete(&entity.PendingUser{}, id).Error; err != nil {
+		return err
+	}
+	return nil
 }

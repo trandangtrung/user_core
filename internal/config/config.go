@@ -14,10 +14,12 @@ type Config struct {
 	ServerCfg ServerConfig
 	DbCfg     DatabaseConfig
 	JwtCfg    JwtConfig
+	MailCfg   MailConfig
 }
 
 type ServerConfig struct {
-	Port int
+	Port   int
+	AppUrl string
 }
 
 type DatabaseConfig struct {
@@ -34,6 +36,14 @@ type JwtConfig struct {
 	SecretKey   string
 	TimeAccess  time.Duration
 	TimeRefresh time.Duration
+}
+
+type MailConfig struct {
+	SmtpHost         string
+	SmtpPort         string
+	SmtpSenderName   string
+	SmtpAuthEmail    string
+	SmtpAuthPassword string
 }
 
 var instance *Config
@@ -58,7 +68,8 @@ func load() (*Config, error) {
 	}
 
 	serverConfig := ServerConfig{
-		Port: parseInt(getEnv("SERVER_PORT", "8000")),
+		Port:   parseInt(getEnv("SERVER_PORT", "8000")),
+		AppUrl: getEnv("APP_URL", "http://localhost:8000"),
 	}
 
 	dbConfig := DatabaseConfig{
@@ -77,10 +88,19 @@ func load() (*Config, error) {
 		TimeRefresh: parseDuration(getEnv("TIME_REFRESH", "1000001h")),
 	}
 
+	mailConfig := MailConfig{
+		SmtpHost:         getEnv("SMTP_HOST", "smtp.gmail.com"),
+		SmtpPort:         getEnv("SMTP_PORT", "587"),
+		SmtpSenderName:   getEnv("SMTP_SENDER_NAME", "StrongBody"),
+		SmtpAuthEmail:    getEnv("SMTP_AUTH_EMAIL", ""),
+		SmtpAuthPassword: getEnv("SMTP_AUTH_PASSWORD", ""),
+	}
+
 	return &Config{
 		ServerCfg: serverConfig,
 		DbCfg:     dbConfig,
 		JwtCfg:    jwtConfig,
+		MailCfg:   mailConfig,
 	}, nil
 }
 

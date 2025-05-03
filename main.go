@@ -22,6 +22,7 @@ func main() {
 		fmt.Println("Please specify the environment (e.g., dev, test, prod) as the first argument.")
 	}
 	initialize.InitToken()
+	initialize.InitGmail()
 
 	// This is a placeholder for the actual seeding logic.
 	// You can replace this with your actual seeding function.

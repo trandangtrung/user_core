@@ -20,7 +20,6 @@ type LoginReq struct {
 	Email    string `json:"email" v:"required|email"`
 	Password string `json:"password" v:"required"`
 }
-
 type LoginRes struct {
 	User  User  `json:"user"`
 	Token Token `json:"token"`
@@ -31,8 +30,24 @@ type SignupReq struct {
 	Email    string `json:"email" v:"required|email"`
 	Password string `json:"password" v:"required"`
 }
-
 type SignupRes struct {
+	Status string `json:"status"`
+}
+
+type VerifyEmailReq struct {
+	g.Meta `path:"/verify-email" method:"post" tags:"auth" summary:"Verify email"`
+	Email  string `json:"email" v:"required|email"`
+	Otp    string `json:"otp" v:"required"`
+}
+type VerifyEmailRes struct {
+	Status string `json:"status"`
+}
+
+type ResendVerifyEmailReq struct {
+	g.Meta `path:"/resend-verify-email" method:"post" tags:"auth" summary:"Resend verify email"`
+	Email  string `json:"email" v:"required|email"`
+}
+type ResendVerifyEmailRes struct {
 	Status string `json:"status"`
 }
 
@@ -40,7 +55,6 @@ type RefreshTokenReq struct {
 	g.Meta `path:"/refresh-token" method:"get" tags:"auth" summary:"refresh token"`
 	Scope  string `in:"header" name:"Scope" default:"network" summary:"Scope"`
 }
-
 type RefreshTokenRes struct {
 	AccessToken string `json:"accessToken"`
 }
@@ -49,7 +63,6 @@ type LoginByTokenReq struct {
 	g.Meta `path:"/login-by-token" method:"post" tags:"auth" summary:"Login by token"`
 	Scope  string `in:"header" name:"Scope" default:"network" summary:"Scope"`
 }
-
 type LoginByTokenRes struct {
 	User  User  `json:"user"`
 	Token Token `json:"token"`

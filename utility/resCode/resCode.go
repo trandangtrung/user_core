@@ -47,6 +47,12 @@ var (
 	EmailInvalid       = gcode.New(40013, "EMAIL_INVALID", nil)
 	EmailAlreadyExists = gcode.New(40912, "EMAIL_ALREADY_EXISTS", nil)
 
+	EmailOTPCreationFailed    = gcode.New(50003, "EMAIL_OTP_CREATION_FAILED", nil)
+	EmailOTPNotFound          = gcode.New(40413, "EMAIL_OTP_NOT_FOUND", nil)
+	EmailOTPSendFailed        = gcode.New(50004, "EMAIL_OTP_SEND_FAILED", nil)
+	EmailOTPSendLimitExceeded = gcode.New(42900, "EMAIL_OTP_SEND_LIMIT_EXCEEDED", nil)
+	EmailOTPInvalid           = gcode.New(40014, "EMAIL_OTP_INVALID", nil)
+
 	PasswordRequired = gcode.New(40014, "PASSWORD_REQUIRED", nil)
 	PasswordTooShort = gcode.New(40015, "PASSWORD_TOO_SHORT", nil)
 	PasswordMismatch = gcode.New(40016, "PASSWORD_MISMATCH", nil)

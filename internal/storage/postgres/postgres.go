@@ -58,6 +58,8 @@ func autoMigrate(db *gorm.DB) error {
 		&entity.App{},
 		&entity.Role{},
 		&entity.Token{},
+		&entity.EmailOTP{},
+		&entity.PendingUser{},
 	)
 }
 
