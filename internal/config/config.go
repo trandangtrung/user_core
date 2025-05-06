@@ -76,7 +76,7 @@ func load() (*Config, error) {
 		User:     getEnv("DB_USER", "postgres"),
 		Password: getEnv("DB_PASSWORD", "root"),
 		DbName:   getEnv("DB_NAME", "user_core"),
-		SSLMode:  getEnv("DB_SSLMODE", "disable"),
+		SSLMode:  getEnv("DB_SSL_MODE", "disable"),
 		TimeZone: getEnv("DB_TIMEZONE", "UTC"),
 	}
 
