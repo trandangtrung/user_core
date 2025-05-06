@@ -1,17 +1,18 @@
 package router
 
 import (
-	"strongbody-api/internal/controller/app"
-	"strongbody-api/internal/controller/auth"
-	"strongbody-api/internal/controller/role"
-	"strongbody-api/internal/controller/user"
-	"strongbody-api/internal/middleware"
-	"strongbody-api/internal/repository"
-	adminRouter "strongbody-api/internal/router/admin"
-	buyerRouter "strongbody-api/internal/router/buyer"
-	sellerRouter "strongbody-api/internal/router/seller"
-	"strongbody-api/internal/service"
-	"strongbody-api/internal/storage/postgres"
+	"github.com/quannv/strongbody-api/global"
+	"github.com/quannv/strongbody-api/internal/controller/app"
+	"github.com/quannv/strongbody-api/internal/controller/auth"
+	"github.com/quannv/strongbody-api/internal/controller/role"
+	"github.com/quannv/strongbody-api/internal/controller/user"
+	"github.com/quannv/strongbody-api/internal/middleware"
+	"github.com/quannv/strongbody-api/internal/repository"
+	adminRouter "github.com/quannv/strongbody-api/internal/router/admin"
+	buyerRouter "github.com/quannv/strongbody-api/internal/router/buyer"
+	sellerRouter "github.com/quannv/strongbody-api/internal/router/seller"
+	"github.com/quannv/strongbody-api/internal/service"
+	"github.com/quannv/strongbody-api/internal/storage/postgres"
 
 	"github.com/gogf/gf/v2/net/ghttp"
 )
@@ -22,18 +23,16 @@ func Router(r *ghttp.RouterGroup) {
 	db := postgres.GetDatabaseConnection().Connection
 
 	// init repository
-	appRepo := repository.NewAppRepository(db)
-	roleRepo := repository.NewRoleRepository(db)
-	tokenRepo := repository.NewTokenRepository(db)
-	// userAppRepo := repository.NewUserAppRepository(db)
-	// userRoleRepo := repository.NewUserRoleRepository(db)
 	userRepo := repository.NewUserRepository(db)
+	roleRepo := repository.NewRoleRepository(db)
+	appRepo := repository.NewAppRepository(db)
 
 	// init logic
-	authService := service.NewAuthService(userRepo, roleRepo, tokenRepo)
+	mailService := service.NewGmailService(global.Gmail, global.Template)
+	authService := service.NewAuthService(userRepo, roleRepo, mailService)
+	userService := service.NewUserService(userRepo, roleRepo, appRepo)
 	appService := service.NewAppService(appRepo)
 	roleService := service.NewRoleService(roleRepo)
-	userService := service.NewUserService(userRepo)
 
 	// init controller
 	authController := auth.NewV1(authService)
@@ -48,7 +47,6 @@ func Router(r *ghttp.RouterGroup) {
 
 	// register router
 	adminRouter.Register(r)
-	buyerRouter.Register(r, middleware, authController, userController, roleController,
-		appController)
+	buyerRouter.Register(r, middleware, authController, userController, roleController, appController)
 	sellerRouter.Register(r, middleware)
 }

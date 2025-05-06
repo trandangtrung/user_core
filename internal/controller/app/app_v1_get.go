@@ -3,8 +3,8 @@ package app
 import (
 	"context"
 
-	v1 "strongbody-api/api/app/v1"
-	"strongbody-api/global"
+	v1 "github.com/quannv/strongbody-api/api/app/v1"
+	"github.com/quannv/strongbody-api/global"
 )
 
 func (c *ControllerV1) Get(ctx context.Context, req *v1.GetReq) (res *v1.GetRes, err error) {

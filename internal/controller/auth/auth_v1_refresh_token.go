@@ -3,8 +3,8 @@ package auth
 import (
 	"context"
 
-	v1 "strongbody-api/api/auth/v1"
-	"strongbody-api/global"
+	v1 "github.com/quannv/strongbody-api/api/auth/v1"
+	"github.com/quannv/strongbody-api/global"
 )
 
 func (c *ControllerV1) RefreshToken(ctx context.Context, req *v1.RefreshTokenReq) (res *v1.RefreshTokenRes, err error) {

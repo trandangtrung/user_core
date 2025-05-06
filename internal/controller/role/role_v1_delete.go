@@ -3,8 +3,8 @@ package role
 import (
 	"context"
 
-	v1 "strongbody-api/api/role/v1"
-	"strongbody-api/global"
+	v1 "github.com/quannv/strongbody-api/api/role/v1"
+	"github.com/quannv/strongbody-api/global"
 )
 
 func (c *ControllerV1) Delete(ctx context.Context, req *v1.DeleteReq) (res *v1.DeleteRes, err error) {

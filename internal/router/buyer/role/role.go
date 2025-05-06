@@ -1,8 +1,8 @@
 package roleBuyerRouter
 
 import (
-	"strongbody-api/api/role"
-	"strongbody-api/internal/middleware"
+	"github.com/quannv/strongbody-api/api/role"
+	"github.com/quannv/strongbody-api/internal/middleware"
 
 	"github.com/gogf/gf/v2/net/ghttp"
 )

@@ -2,9 +2,10 @@ package initialize
 
 import (
 	"context"
-	"strongbody-api/global"
-	"strongbody-api/internal/config"
-	"strongbody-api/utility/token"
+
+	"github.com/quannv/strongbody-api/global"
+	"github.com/quannv/strongbody-api/internal/config"
+	"github.com/quannv/strongbody-api/utility/token"
 )
 
 func InitToken() {

@@ -11,13 +11,15 @@ import (
 )
 
 type Config struct {
-	ServerCfg ServerConfig
-	DbCfg     DatabaseConfig
-	JwtCfg    JwtConfig
+	ServerCfg  ServerConfig
+	DbCfg      DatabaseConfig
+	JwtCfg     JwtConfig
+	MailConfig mailConfig
 }
 
 type ServerConfig struct {
-	Port int
+	Port   int
+	AppUrl string
 }
 
 type DatabaseConfig struct {
@@ -34,6 +36,12 @@ type JwtConfig struct {
 	SecretKey   string
 	TimeAccess  time.Duration
 	TimeRefresh time.Duration
+}
+
+type mailConfig struct {
+	NameEmail     string
+	AccountEmail  string
+	PasswordEmail string
 }
 
 var instance *Config
@@ -58,7 +66,8 @@ func load() (*Config, error) {
 	}
 
 	serverConfig := ServerConfig{
-		Port: parseInt(getEnv("SERVER_PORT", "8000")),
+		Port:   parseInt(getEnv("SERVER_PORT", "8000")),
+		AppUrl: getEnv("APP_URL", "http://localhost:8000"),
 	}
 
 	dbConfig := DatabaseConfig{
@@ -77,10 +86,17 @@ func load() (*Config, error) {
 		TimeRefresh: parseDuration(getEnv("TIME_REFRESH", "1000001h")),
 	}
 
+	mailConfig := mailConfig{
+		NameEmail:     getEnv("NAME_EMAIL", "Nguyễn Đại Nghĩa"),
+		AccountEmail:  getEnv("ACCOUNT_EMAIL", ""),
+		PasswordEmail: getEnv("PASSWORD_EMAIL", ""),
+	}
+
 	return &Config{
-		ServerCfg: serverConfig,
-		DbCfg:     dbConfig,
-		JwtCfg:    jwtConfig,
+		ServerCfg:  serverConfig,
+		DbCfg:      dbConfig,
+		JwtCfg:     jwtConfig,
+		MailConfig: mailConfig,
 	}, nil
 }
 

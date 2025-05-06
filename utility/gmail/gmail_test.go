@@ -2,8 +2,9 @@ package mail
 
 import (
 	"log"
-	"strongbody-api/utility/template"
 	"testing"
+
+	"github.com/quannv/strongbody-api/utility/template"
 
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/stretchr/testify/require"
@@ -21,6 +22,7 @@ func TestSendEmailWithGmail(t *testing.T) {
 	sender := NewGmailSender(name, fromEmailAddress, fromEmailPassword)
 
 	data := g.Map{
+		"UserName":  "Nguyễn Đại Nghĩa",
 		"header":    "Test header",
 		"container": "Test container 1",
 		"footer":    "Test footer",
@@ -38,7 +40,7 @@ func TestSendEmailWithGmail(t *testing.T) {
 
 	initTmpl := template.NewTemplate()
 
-	tmpl, err := initTmpl.Get("layout.html", data)
+	tmpl, err := initTmpl.Get("/resource/template/welcome", "index.html", data)
 
 	if err != nil {
 		require.NoError(t, err)

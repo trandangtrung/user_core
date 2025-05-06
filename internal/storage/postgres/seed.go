@@ -1,73 +1,135 @@
 package postgres
 
 import (
-	"strongbody-api/internal/entity"
-	utils "strongbody-api/utility"
+	"time"
+
+	"github.com/quannv/strongbody-api/internal/entity"
+	utils "github.com/quannv/strongbody-api/utility"
 )
 
+// Seed inserts initial data for testing
 func (d *Database) Seed() error {
 	db := d.Connection
 
-	// 1. Tạo User
-	hashedPassword, err := utils.HashPassword("hashed-password")
+	// Avoid duplicate seed
+	var count int64
+	db.Model(&entity.App{}).Where("name = ?", "network").Count(&count)
+	if count > 0 {
+		return nil // Already seeded
+	}
+
+	// Create App
+	app := &entity.App{
+		Name:   "network",
+		Key:    "network-key",
+		Config: `{"key": "value"}`,
+	}
+	if err := db.Create(app).Error; err != nil {
+		return err
+	}
+
+	app1 := &entity.App{
+		Name:   "shop",
+		Key:    "network-key",
+		Config: `{"key": "value"}`,
+	}
+	if err := db.Create(app1).Error; err != nil {
+		return err
+	}
+
+	// Create Role
+	role := &entity.Role{
+		Name:        "admin",
+		Key:         "admin",
+		Description: "Administrator role",
+		AppID:       app.ID,
+	}
+	if err := db.Create(role).Error; err != nil {
+		return err
+	}
+
+	role1 := &entity.Role{
+		Name:        "bảo vệ",
+		Key:         "admin",
+		Description: "Administrator role",
+		AppID:       app1.ID,
+	}
+	if err := db.Create(role1).Error; err != nil {
+		return err
+	}
+
+	// hash password
+	hashedPassword, err := utils.HashPassword("admin")
 	if err != nil {
 		return err
 	}
-	user := entity.User{
-		Email:          "test@example.com",
+
+	hashedPassword1, err := utils.HashPassword("user")
+	if err != nil {
+		return err
+	}
+
+	// Create User
+	user := &entity.User{
+		Email:          "admin@example.com",
 		PasswordHashed: hashedPassword,
+		UserName:       "adminuser",
+		FirstName:      "Admin",
+		LastName:       "User",
+		Mobile:         "094999999",
+		BirthDate:      ptrTime(time.Date(1990, 1, 1, 0, 0, 0, 0, time.UTC)),
+		Language:       "en",
+		Currency:       "USD",
 	}
-	if err := db.Create(&user).Error; err != nil {
+	if err := db.Create(user).Error; err != nil {
 		return err
 	}
 
-	// 2. Tạo Platform
-	app := entity.App{
-		Name:   "network",
-		Config: `{"theme":"dark","version":"1.0.0"}`,
+	user1 := &entity.User{
+		Email:          "user@example.com",
+		PasswordHashed: hashedPassword1,
+		UserName:       "user",
+		FirstName:      "User",
+		Mobile:         "094999998",
+		LastName:       "User",
+		BirthDate:      ptrTime(time.Date(1990, 1, 1, 0, 0, 0, 0, time.UTC)),
+		Language:       "en",
+		Currency:       "USD",
 	}
-	if err := db.Create(&app).Error; err != nil {
+	if err := db.Create(user1).Error; err != nil {
 		return err
 	}
 
-	// 3. Tạo Role
-	role := entity.Role{
-		AppID:       app.ID,
-		Name:        "Admin",
-		Description: "Quyền quản trị",
-	}
-	if err := db.Create(&role).Error; err != nil {
+	// Attach App to User (user_apps)
+	if err := db.Model(&user).Association("Apps").Append(app); err != nil {
 		return err
 	}
 
-	// 4. Gán Role cho User
-	userRole := entity.UserRoles{
-		UserID: user.ID,
-		RoleID: role.ID,
-	}
-
-	if err := db.Create(&userRole).Error; err != nil {
+	if err := db.Model(&user).Association("Apps").Append(app1); err != nil {
 		return err
 	}
 
-	// 5. Gán Platform cho User
-	userPlatform := entity.UserApps{
-		UserID: user.ID,
-		AppID:  uint(app.ID),
-	}
-	if err := db.Create(&userPlatform).Error; err != nil {
+	if err := db.Model(&user1).Association("Apps").Append(app); err != nil {
 		return err
 	}
 
-	// 6. Tạo Refresh Token
-	token := entity.Token{
-		UserID:       user.ID,
-		RefreshToken: "sample-refresh-token-123456",
-		Scope:        "read write",
+	// Attach Role to User (user_roles)
+	if err := db.Model(&user).Association("Roles").Append(role); err != nil {
+		return err
 	}
-	if err := db.Create(&token).Error; err != nil {
+
+	if err := db.Model(&user).Association("Roles").Append(role1); err != nil {
+		return err
+	}
+
+	if err := db.Model(&user1).Association("Roles").Append(role); err != nil {
 		return err
 	}
 
 	return nil
+}
+
+// Helper to get pointer to time
+func ptrTime(t time.Time) *time.Time {
+	return &t
 }

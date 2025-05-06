@@ -7,12 +7,14 @@ package auth
 import (
 	"context"
 
-	"strongbody-api/api/auth/v1"
+	"github.com/quannv/strongbody-api/api/auth/v1"
 )
 
 type IAuthV1 interface {
 	Login(ctx context.Context, req *v1.LoginReq) (res *v1.LoginRes, err error)
 	Signup(ctx context.Context, req *v1.SignupReq) (res *v1.SignupRes, err error)
+	VerifyEmail(ctx context.Context, req *v1.VerifyEmailReq) (res *v1.VerifyEmailRes, err error)
+	ResendVerifyEmail(ctx context.Context, req *v1.ResendVerifyEmailReq) (res *v1.ResendVerifyEmailRes, err error)
 	RefreshToken(ctx context.Context, req *v1.RefreshTokenReq) (res *v1.RefreshTokenRes, err error)
 	LoginByToken(ctx context.Context, req *v1.LoginByTokenReq) (res *v1.LoginByTokenRes, err error)
 }

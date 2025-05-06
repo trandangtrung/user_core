@@ -5,8 +5,8 @@
 package user
 
 import (
-	"strongbody-api/api/user"
-	"strongbody-api/internal/service"
+	"github.com/quannv/strongbody-api/api/user"
+	"github.com/quannv/strongbody-api/internal/service"
 )
 
 type ControllerV1 struct {

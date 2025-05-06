@@ -5,8 +5,8 @@
 package auth
 
 import (
-	"strongbody-api/api/auth"
-	"strongbody-api/internal/service"
+	"github.com/quannv/strongbody-api/api/auth"
+	"github.com/quannv/strongbody-api/internal/service"
 )
 
 type ControllerV1 struct {

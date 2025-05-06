@@ -2,7 +2,8 @@ package repository
 
 import (
 	"context"
-	"strongbody-api/internal/entity"
+
+	"github.com/quannv/strongbody-api/internal/entity"
 
 	"gorm.io/gorm"
 )

@@ -1,15 +1,15 @@
 package buyerRouter
 
 import (
-	"strongbody-api/api/app"
-	"strongbody-api/api/auth"
-	"strongbody-api/api/role"
-	"strongbody-api/api/user"
-	"strongbody-api/internal/middleware"
-	appBuyerRouter "strongbody-api/internal/router/buyer/app"
-	authBuyerRouter "strongbody-api/internal/router/buyer/auth"
-	roleBuyerRouter "strongbody-api/internal/router/buyer/role"
-	userBuyerRouter "strongbody-api/internal/router/buyer/user"
+	"github.com/quannv/strongbody-api/api/app"
+	"github.com/quannv/strongbody-api/api/auth"
+	"github.com/quannv/strongbody-api/api/role"
+	"github.com/quannv/strongbody-api/api/user"
+	"github.com/quannv/strongbody-api/internal/middleware"
+	appBuyerRouter "github.com/quannv/strongbody-api/internal/router/buyer/app"
+	authBuyerRouter "github.com/quannv/strongbody-api/internal/router/buyer/auth"
+	roleBuyerRouter "github.com/quannv/strongbody-api/internal/router/buyer/role"
+	userBuyerRouter "github.com/quannv/strongbody-api/internal/router/buyer/user"
 
 	"github.com/gogf/gf/v2/net/ghttp"
 )

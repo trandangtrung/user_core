@@ -2,11 +2,13 @@ package service
 
 import (
 	"context"
-	v1 "strongbody-api/api/role/v1"
-	"strongbody-api/internal/consts"
-	"strongbody-api/internal/entity"
-	"strongbody-api/internal/repository"
-	"strongbody-api/utility/token"
+
+	v1 "github.com/quannv/strongbody-api/api/role/v1"
+	"github.com/quannv/strongbody-api/internal/consts"
+	"github.com/quannv/strongbody-api/internal/entity"
+	"github.com/quannv/strongbody-api/internal/repository"
+	rescode "github.com/quannv/strongbody-api/utility/resCode"
+	"github.com/quannv/strongbody-api/utility/token"
 
 	"github.com/gogf/gf/v2/errors/gcode"
 	"github.com/gogf/gf/v2/errors/gerror"
@@ -15,12 +17,11 @@ import (
 
 type (
 	RoleService interface {
-		Get(ctx context.Context, req *v1.GetReq) (*v1.GetRes, error)
+		GetByID(ctx context.Context, req *v1.GetReq) (*v1.GetRes, error)
 		Create(ctx context.Context, req *v1.CreateReq) (*v1.CreateRes, error)
 		Update(ctx context.Context, req *v1.UpdateReq) (*v1.UpdateRes, error)
 		Delete(ctx context.Context, id uint) error
 	}
-
 	roleService struct {
 		roleRepo repository.RoleRepository
 	}
@@ -32,17 +33,15 @@ func NewRoleService(roleRepo repository.RoleRepository) RoleService {
 	}
 }
 
-func (s *roleService) Get(ctx context.Context, req *v1.GetReq) (*v1.GetRes, error) {
-	if req.Id <= 0 {
-		return nil, gerror.NewCode(gcode.CodeInvalidParameter, "invalid ID")
-	}
+func (s *roleService) GetByID(ctx context.Context, req *v1.GetReq) (*v1.GetRes, error) {
 
-	role, err := s.roleRepo.GetByID(ctx, uint(req.Id))
+	role, err := s.roleRepo.GetRoleByID(ctx, uint(req.Id))
 	if err != nil {
-		return nil, gerror.WrapCode(gcode.CodeInternalError, err, "failed to get role")
+		return nil, gerror.WrapCode(rescode.RoleGetFailed, err, "failed to get role")
 	}
 	if role == nil {
-		return nil, gerror.NewCode(gcode.CodeNotFound, "role not found")
+		return nil, gerror.WrapCode(rescode.RoleNotFound, err, "role not found")
+
 	}
 
 	return &v1.GetRes{
@@ -66,9 +65,9 @@ func (s *roleService) Create(ctx context.Context, req *v1.CreateReq) (*v1.Create
 		Description: req.Description,
 	}
 
-	created, err := s.roleRepo.Create(ctx, newRole)
+	created, err := s.roleRepo.CreateRole(ctx, newRole)
 	if err != nil {
-		return nil, gerror.WrapCode(gcode.CodeInternalError, err, "failed to create role")
+		return nil, gerror.WrapCode(rescode.RoleCreateFailed, err, "failed to create role")
 	}
 
 	return &v1.CreateRes{
@@ -87,12 +86,12 @@ func (s *roleService) Update(ctx context.Context, req *v1.UpdateReq) (*v1.Update
 	convertedID := uint(id)
 	pointerID := &convertedID
 
-	existingRole, err := s.roleRepo.GetByID(ctx, req.Id)
+	existingRole, err := s.roleRepo.GetRoleByID(ctx, req.Id)
 	if err != nil {
-		return nil, gerror.WrapCode(gcode.CodeInternalError, err, "failed to get role")
+		return nil, gerror.WrapCode(rescode.RoleGetFailed, err, "failed to get role")
 	}
 	if existingRole == nil {
-		return nil, gerror.NewCode(gcode.CodeNotFound, "role not found")
+		return nil, gerror.WrapCode(rescode.RoleNotFound, err, "role not found")
 	}
 
 	if req.Name != "" {
@@ -104,9 +103,9 @@ func (s *roleService) Update(ctx context.Context, req *v1.UpdateReq) (*v1.Update
 
 	existingRole.UpdatedBy = pointerID
 
-	updated, err := s.roleRepo.Update(ctx, existingRole)
+	updated, err := s.roleRepo.UpdateRole(ctx, existingRole)
 	if err != nil {
-		return nil, gerror.WrapCode(gcode.CodeInternalError, err, "failed to update role")
+		return nil, gerror.WrapCode(rescode.RoleUpdateFailed, err, "failed to update role")
 	}
 
 	return &v1.UpdateRes{
@@ -124,9 +123,9 @@ func (s *roleService) Delete(ctx context.Context, id uint) error {
 		return gerror.NewCode(gcode.CodeInvalidParameter, "invalid ID")
 	}
 
-	err := s.roleRepo.Delete(ctx, id)
+	err := s.roleRepo.DeleteRole(ctx, id)
 	if err != nil {
-		return gerror.WrapCode(gcode.CodeInternalError, err, "failed to delete role")
+		return gerror.WrapCode(rescode.RoleDeleteFailed, err, "failed to delete role")
 	}
 
 	return nil

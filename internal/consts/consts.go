@@ -19,3 +19,5 @@ var CONFIG_SCOPE = map[string]string{
 	"shop":    "shop",
 	"multi":   "multi",
 }
+
+
